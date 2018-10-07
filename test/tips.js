@@ -16,8 +16,6 @@ describe('Tips Test', () => {
     beforeEach(() => {
       dag = new Dag();
       tips = ['a'];
-      //T = ['friend', 'follows'];
-      //E = [];
       E.push({ from: 'a', to: 'b' });
       E.push({ from: 'b', to: 'c' });
       E.push({ from: 'd', to: 'b' });
@@ -26,8 +24,6 @@ describe('Tips Test', () => {
     });
 
     it('should return tips', () => {
-        // const removedDag = dag.deepClone();
-        // removedDag.removeEdge('e', 'b');
         deepEqual(dag.tips, tips).should.equal(true);
       });
     });
