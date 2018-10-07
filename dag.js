@@ -50,9 +50,7 @@ class Dag {
             if (edge !== undefined) {
                 return {
                     from: edge.from,
-                    to,
-                    //weight: edge.w,
-                    //tags: edge.ts.reduce((previous, tagObject) => previous.concat([tagObject.name]), []),
+                    to
                 };
             }
         }
@@ -240,7 +238,7 @@ class Dag {
      */
     clone() {
         const newDag = new Dag();
-        Object.keys(this.edges).forEach((key) => { newDag.edges[key] = this.edges[key]; });
+        Object.keys(this.edges).forEach((key) => { newDag.edges[key] = this.edges[key]; newDag.storage[key] = this.storage[key] });
         return newDag;
     }
     includes(from, to) {
