@@ -1,8 +1,8 @@
 const Dag = require('../dag');
 
-const CycleError = require('../cycle-error');
+//const CycleError = require('../cycle-error');
 
-const expect = require('chai').expect;
+//const expect = require('chai').expect;
 
 const deepEqual = require('deep-equal');
 
