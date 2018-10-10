@@ -2,32 +2,29 @@ const CycleError = require('./cycle-error');
 const DownPath = require('./downPath')
 class Dag {
     constructor() {
-        this.edges = [];
-        this.storage = [];
+        this._edges = [];
+        this._storage = [];
     }
-    readObj(v) {
-        return this.storage[v]
+
+    get order() {
+        const verticies = this.V;
+        return verticies.length;
     }
-    saveObj(v, obj) {
-        if (!this.V.includes(v))
-            throw 'Undefined vertex'
-        this.storage[v] = obj
-    }
-    removeObj(v) {
-        if (this.storage[v])
-            delete this.storage[v]
+
+    get size() {
+        return Object.keys(this._edges).reduce((previous, key) => previous + this._edges[key].length, 0);
     }
     get tips() {
-        let to = Object.keys(this.edges)
+        let to = Object.keys(this._edges)
         return this.V.filter(t => { return to.indexOf(t) < 0 })
     }
     get V() {
-        const verticies = Object.keys(this.edges).reduce((previous, key) => {
-            if (this.edges[key].length > 0) {
+        const verticies = Object.keys(this._edges).reduce((previous, key) => {
+            if (this._edges[key].length > 0) {
                 if (!previous.includes(key)) {
                     previous.push(key);
                 }
-                this.edges[key].forEach((e) => {
+                this._edges[key].forEach((e) => {
                     if (!previous.includes(e.from)) {
                         previous.push(e.from);
                     }
@@ -39,14 +36,28 @@ class Dag {
     }
     get E() {
         const edges = [];
-        Object.keys(this.edges).forEach((to) => {
-            this.edges[to].forEach(edge => edges.push(this.edge(edge.from, to)));
+        Object.keys(this._edges).forEach((to) => {
+            this._edges[to].forEach(edge => edges.push(this.edge(edge.from, to)));
         });
         return edges;
     }
+    readObj(v) {
+        return this._storage[v]
+    }
+    saveObj(v, obj) {
+        if (!this.V.includes(v))
+            throw 'Unknown vertex'
+        this._storage[v] = obj
+    }
+    removeObj(v) {
+        if (this._storage[v])
+            delete this._storage[v]
+        // else
+        //     throw 'Unknown vertex'
+    }
     edge(from, to) {
-        if (this.edges[to] !== undefined) {
-            const edge = this.edges[to].find(e => e.from === from);
+        if (this._edges[to] !== undefined) {
+            const edge = this._edges[to].find(e => e.from === from);
             if (edge !== undefined) {
                 return {
                     from: edge.from,
@@ -61,7 +72,7 @@ class Dag {
     */
     add(from, to) {
         // test cycle
-        if (this.testCycle(from, to)) {
+        if (this._testCycle(from, to)) {
             throw new CycleError();
         }
 
@@ -71,49 +82,14 @@ class Dag {
         };
 
         // register the edge
-        if (this.edges[to] === undefined) {
-            this.edges[to] = [];
+        if (this._edges[to] === undefined) {
+            this._edges[to] = [];
         }
-        this.edges[to].push(edge);
+        this._edges[to].push(edge);
 
         return this;
     }
 
-    /**
-       * @param {string} start - starting point of reverse-BFS
-       * @callback hitCondition - condition to stop traversal
-       * @callback callback - task to do for each visit. The visit stopping the traversal is exclusive.
-       */
-    reverseBFS(start, hitCondition, callback) {
-        const q = [start];
-        while (q.length > 0) {
-            const visit = q.shift();
-            if (hitCondition !== undefined && hitCondition(visit)) {
-                return visit;
-            }
-            if (callback !== undefined) {
-                callback(visit);
-            }
-            if (this.edges[visit] !== undefined) {
-                this.edges[visit].forEach(e => q.push(e.from));
-            }
-        }
-        return undefined;
-    }
-
-    /**
-    * @return {boolean}    true, if (@code{from}, @code{to}) makes a cycle. false, otherwise.
-    */
-    testCycle(from, to) {
-        if (from === to) {
-            return true;
-        }
-        const hit = this.reverseBFS(from, v => v === to);
-        if (hit === undefined) {
-            return false;
-        }
-        return true;
-    }
     /**
    * Edges go to a vertex
    * @param {string} to       the vertex.
@@ -122,11 +98,11 @@ class Dag {
    *                          it.
    */
     edgesTo(to) {
-        if (undefined === this.edges[to]) {
+        if (undefined === this._edges[to]) {
             return new Dag();
         }
         const dag = new Dag();
-        this.edges[to].forEach((e) => {
+        this._edges[to].forEach((e) => {
             const cloned = { from: e.from, to };
             dag.add(cloned.from, cloned.to);
         });
@@ -140,8 +116,8 @@ class Dag {
      */
     edgesFrom(from) {
         const dag = new Dag();
-        Object.keys(this.edges).forEach((key) => {
-            this.edges[key].forEach((e) => {
+        Object.keys(this._edges).forEach((key) => {
+            this._edges[key].forEach((e) => {
                 if (e.from === from) {
                     const cloned = { from: e.from, to: key };
                     dag.add(cloned.from, cloned.to);
@@ -150,67 +126,53 @@ class Dag {
         });
         return dag;
     }
-
-    findPathsDown(from){
+    findPathsDown(from) {
         let downPath = new DownPath()
-        this.down(from, downPath)
-        downPath.trim();
+        this._down(from, downPath)
+        downPath._trim();
         return downPath
     }
-    down(from, dp){
-        let to = Object.keys(this.edgesFrom(from).edges)
-        to.forEach((v) => {
-            dp.add(v)
-            if(Object.keys(this.edgesFrom(v).edges).length > 0) this.down(v, dp)
-            else{
-                dp.nextPath()
-                return
-            }
-        })
-    }
-
     removeVertex(vertex, callback) {
         // remove edges 'to' the verted
-        let obj = this.readObj(vertex)
-        this.removeObj(vertex)
+        if (this.V.includes(vertex)) {
+            let obj = this.readObj(vertex)
+            this.removeObj(vertex)
 
-        if (vertex in this.edges) {
-            // arrange edges
-            delete this.edges[vertex];
-        }
-
-        // remove edges 'from' the vertex
-        Object.keys(this.edges).forEach((to) => {
-            // arrnage edges
-            //const tagsToRemove = [];
-            this.edges[to] = this.edges[to].filter((e) => {
-                return e.from !== vertex;
-            });
-            if (this.edges[to].length === 0) {
-                delete this.edges[to];
+            if (vertex in this._edges) {
+                // arrange edges
+                delete this._edges[vertex];
             }
-
-
-        });
-        //return this;
+            // remove edges 'from' the vertex
+            Object.keys(this._edges).forEach((to) => {
+                // arrnage edges
+                this._edges[to] = this._edges[to].filter((e) => {
+                    return e.from !== vertex;
+                });
+                if (this._edges[to].length === 0) {
+                    delete this._edges[to];
+                }
+            });
+        
         if (callback)
             callback.call(null, obj)
+        }
+        else
+            throw 'Unknown vertex'
     }
 
     // remove
     removeEdge(from, to) {
-        if (!(to in this.edges)) {
+        if (!(to in this._edges)) {
             return this;
         }
-
         // arrange edges
-        const targetIndex = this.edges[to].findIndex(e => e.from === from);
+        const targetIndex = this._edges[to].findIndex(e => e.from === from);
         if (targetIndex === -1) {
             return this;
         }
-        const removed = this.edges[to].splice(targetIndex, 1)[0];
-        if (this.edges[to].length === 0) {
-            delete this.edges[to];
+        const removed = this._edges[to].splice(targetIndex, 1)[0];
+        if (this._edges[to].length === 0) {
+            delete this._edges[to];
         }
         return this;
     }
@@ -220,14 +182,13 @@ class Dag {
    */
     deepClone() {
         const newDag = new Dag();
-        Object.keys(this.edges).forEach((to) => {
-            this.edges[to].forEach((e) => {
+        Object.keys(this._edges).forEach((to) => {
+            this._edges[to].forEach((e) => {
                 // clone the edge
-                //const tags = e.ts.reduce((previous, tagObj) => previous.concat([tagObj.name]), []);
                 newDag.add(e.from, to);
             });
         });
-        this.V.forEach((v) => { if (this.readObj(v)) newDag.saveObj(v, this.readObj(v))})
+        this.V.forEach((v) => { if (this.readObj(v)) newDag.saveObj(v, this.readObj(v)) })
         return newDag;
     }
     // clone
@@ -238,19 +199,57 @@ class Dag {
      */
     clone() {
         const newDag = new Dag();
-        Object.keys(this.edges).forEach((key) => { newDag.edges[key] = this.edges[key]; newDag.storage[key] = this.storage[key] });
+        Object.keys(this._edges).forEach((key) => { newDag._edges[key] = this._edges[key]; newDag._storage[key] = this._storage[key] });
         return newDag;
     }
     includes(from, to) {
         return this.edge(from, to) !== undefined;
     }
-    get order() {
-        const verticies = this.V;
-        return verticies.length;
-    }
 
-    get size() {
-        return Object.keys(this.edges).reduce((previous, key) => previous + this.edges[key].length, 0);
+    _down(from, dp) {
+        let to = Object.keys(this.edgesFrom(from)._edges)
+        to.forEach((v) => {
+            dp._add(v)
+            if (Object.keys(this.edgesFrom(v)._edges).length > 0) this._down(v, dp)
+            else {
+                dp._nextPath()
+                return
+            }
+        })
+    }
+    /**
+      * @param {string} start - starting point of reverse-BFS
+      * @callback hitCondition - condition to stop traversal
+      * @callback callback - task to do for each visit. The visit stopping the traversal is exclusive.
+      */
+    _reverseBFS(start, hitCondition, callback) {
+        const q = [start];
+        while (q.length > 0) {
+            const visit = q.shift();
+            if (hitCondition !== undefined && hitCondition(visit)) {
+                return visit;
+            }
+            if (callback !== undefined) {
+                callback(visit);
+            }
+            if (this._edges[visit] !== undefined) {
+                this._edges[visit].forEach(e => q.push(e.from));
+            }
+        }
+        return undefined;
+    }
+    /**
+    * @return {boolean}    true, if (@code{from}, @code{to}) makes a cycle. false, otherwise.
+    */
+    _testCycle(from, to) {
+        if (from === to) {
+            return true;
+        }
+        const hit = this._reverseBFS(from, v => v === to);
+        if (hit === undefined) {
+            return false;
+        }
+        return true;
     }
 }
 //

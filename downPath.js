@@ -1,18 +1,18 @@
 class DownPath {
     constructor() {
-        this.index = 0
         this.paths = []
+        this._index = 0
         this.paths[0] = []
     }
-    nextPath() {
-        this.index++
-        this.paths[this.index] = []
+    _nextPath() {
+        this._index++
+        this.paths[this._index] = []
     }
-    add(v) {
-        this.paths[this.index].push(v)
+    _add(v) {
+        this.paths[this._index].push(v)
     }
-    trim(){
-        this.paths.splice(this.paths.length -1,1)
+    _trim(){
+        this.paths.splice(this.paths.length -1, 1)
     }
     [Symbol.iterator]() {
         var index = -1;

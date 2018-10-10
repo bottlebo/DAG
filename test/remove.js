@@ -1,6 +1,7 @@
 const Dag = require('../dag');
 const util = require('util')
 const deepEqual = require('deep-equal');
+const expect = require('chai').expect;
 
 describe('Removal Test', () => {
   describe('DAG(order=4, size=4)', () => {
@@ -12,7 +13,7 @@ describe('Removal Test', () => {
       dag = new Dag();
       V = ['a', 'b', 'c', 'd'];
       E = [];
-      E.push({ from: 'a', to: 'b'});
+      E.push({ from: 'a', to: 'b' });
       E.push({ from: 'b', to: 'c' });
       E.push({ from: 'd', to: 'b' });
       E.push({ from: 'a', to: 'd' });
@@ -75,6 +76,9 @@ describe('Removal Test', () => {
         removedE.forEach(e => removedDag.edge(e.from, e.to).should.deep.equal(e));
       });
     });
-
+    //
+    it('should not remove unknown vertex', () => {
+      expect(() => dag.removeVertex('f')).to.throw('Unknown vertex');;
+    });
   });
 });
