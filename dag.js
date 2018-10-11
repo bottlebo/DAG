@@ -5,31 +5,31 @@ class Dag {
         this._edges = [];
         this._storage = [];
     }
-
     get order() {
         const verticies = this.V;
         return verticies.length;
     }
-
     get size() {
         return Object.keys(this._edges).reduce((previous, key) => previous + this._edges[key].length, 0);
     }
     get tips() {
         let to = Object.keys(this._edges)
-        return this.V.filter(t => { return to.indexOf(t) < 0 })
+        return this.V.filter(t => {
+            return this.edgesTo(t)._edges[t] === undefined
+        })
     }
     get V() {
         const verticies = Object.keys(this._edges).reduce((previous, key) => {
-            if (this._edges[key].length > 0) {
-                if (!previous.includes(key)) {
-                    previous.push(key);
-                }
-                this._edges[key].forEach((e) => {
-                    if (!previous.includes(e.from)) {
-                        previous.push(e.from);
-                    }
-                });
+            //if (this._edges[key].length > 0) {
+            if (!previous.includes(key)) {
+                previous.push(key);
             }
+            this._edges[key].forEach((e) => {
+                if (!previous.includes(e.from)) {
+                    previous.push(e.from);
+                }
+            });
+            //}
             return previous;
         }, []);
         return verticies;
@@ -75,18 +75,15 @@ class Dag {
         if (this._testCycle(from, to)) {
             throw new CycleError();
         }
-
         // instantiate an edge
         const edge = {
             from: from
         };
-
         // register the edge
         if (this._edges[to] === undefined) {
             this._edges[to] = [];
         }
         this._edges[to].push(edge);
-
         return this;
     }
 
@@ -132,28 +129,32 @@ class Dag {
         downPath._trim();
         return downPath
     }
-    removeVertex(vertex, callback) {
+    removeVertex(v, callback) {
         // remove edges 'to' the verted
-        if (this.V.includes(vertex)) {
-            let obj = this.readObj(vertex)
-            this.removeObj(vertex)
-
-            if (vertex in this._edges) {
-                // arrange edges
-                delete this._edges[vertex];
+        if (this.V.includes(v)) {
+            let obj = this.readObj(v)
+            let vx = [v]
+            for (let p of this.findPathsDown(v)) {
+                vx.push(...p.filter(x => vx.indexOf(x) < 0))
             }
-            // remove edges 'from' the vertex
-            Object.keys(this._edges).forEach((to) => {
-                // arrnage edges
-                this._edges[to] = this._edges[to].filter((e) => {
-                    return e.from !== vertex;
-                });
-                if (this._edges[to].length === 0) {
-                    delete this._edges[to];
+            for (let vertex of vx) {
+                this.removeObj(vertex)
+                if (vertex in this._edges) {
+                    // arrange edges
+                    delete this._edges[vertex];
                 }
-            });
-        
-        if (callback)
+                // remove edges 'from' the vertex
+                Object.keys(this._edges).forEach((to) => {
+                    // arrnage edges
+                    this._edges[to] = this._edges[to].filter((e) => {
+                        return e.from !== vertex;
+                    });
+                    // if (this._edges[to].length === 0) {
+                    //     delete this._edges[to];
+                    // }
+                });
+            }
+            if (callback)
             callback.call(null, obj)
         }
         else
@@ -170,10 +171,10 @@ class Dag {
         if (targetIndex === -1) {
             return this;
         }
-        const removed = this._edges[to].splice(targetIndex, 1)[0];
-        if (this._edges[to].length === 0) {
-            delete this._edges[to];
-        }
+        this._edges[to].splice(targetIndex, 1)[0];
+        // if (this._edges[to].length === 0) {
+        //     delete this._edges[to];
+        // }
         return this;
     }
     /**
@@ -207,10 +208,11 @@ class Dag {
     }
 
     _down(from, dp) {
-        let to = Object.keys(this.edgesFrom(from)._edges)
+        let to = []// Object.keys(this.edgesFrom(from)._edges)
+        this._edges[from].forEach((f) => { to.push(f.from) })
         to.forEach((v) => {
             dp._add(v)
-            if (Object.keys(this.edgesFrom(v)._edges).length > 0) this._down(v, dp)
+            if (Object.keys(this.edgesTo(v)._edges).length > 0) this._down(v, dp)
             else {
                 dp._nextPath()
                 return
