@@ -5,19 +5,31 @@ class Dag {
         this._edges = [];
         this._storage = [];
     }
+    /**
+    * @returns length of dag verticies
+    */
     get order() {
         const verticies = this.V;
         return verticies.length;
     }
+    /**
+    * @returns length of dag edges
+    */
     get size() {
         return Object.keys(this._edges).reduce((previous, key) => previous + this._edges[key].length, 0);
     }
+    /**
+    * @returns  dag tips
+    */
     get tips() {
         let to = Object.keys(this._edges)
         return this.V.filter(t => {
             return this.edgesTo(t)._edges[t] === undefined
         })
     }
+    /**
+    * @returns  dag verticies
+    */
     get V() {
         const verticies = Object.keys(this._edges).reduce((previous, key) => {
             //if (this._edges[key].length > 0) {
@@ -34,6 +46,9 @@ class Dag {
         }, []);
         return verticies;
     }
+    /**
+    * @returns  dag edges
+    */
     get E() {
         const edges = [];
         Object.keys(this._edges).forEach((to) => {
@@ -41,20 +56,41 @@ class Dag {
         });
         return edges;
     }
+    /**
+     * Read object from vertex
+     * @param {string} v  the vertex.
+     * @returns  object stored at the vertex
+    */
     readObj(v) {
         return this._storage[v]
     }
+    /**
+     * Save object to vertex
+     * @param {string} v  the vertex.
+     * @param {object} obj - object stored at the vertex
+     *
+    */
     saveObj(v, obj) {
         if (!this.V.includes(v))
             throw 'Unknown vertex'
         this._storage[v] = obj
     }
+    /**
+     * Remove object from vertex
+     * @param {string} v  the vertex.
+     * 
+   */
     removeObj(v) {
         if (this._storage[v])
             delete this._storage[v]
         // else
         //     throw 'Unknown vertex'
     }
+    /**
+    * @param {string} from  the edge from.
+    * @param {string} to  the edge to.
+    * @returns  edge or undefined if edge non-exist
+   */
     edge(from, to) {
         if (this._edges[to] !== undefined) {
             const edge = this._edges[to].find(e => e.from === from);
@@ -68,7 +104,10 @@ class Dag {
         return undefined;
     }
     /**
-    *
+    * Add edge to dag
+    * @param {string} from  the edge from.
+    * @param {string} to  the edge to.
+    * @returns  dag
     */
     add(from, to) {
         // test cycle
@@ -88,11 +127,11 @@ class Dag {
     }
 
     /**
-   * Edges go to a vertex
-   * @param {string} to       the vertex.
-   * @returns {@type {Dag}}   deep cloned edges end at the vertex 'to'.
-   *                          empty DAG, if the vertex does not exist or there is no edges heading
-   *                          it.
+    * Edges go to a vertex
+    * @param {string} to       the vertex.
+    * @returns {@type {Dag}}   deep cloned edges end at the vertex 'to'.
+    *                          empty DAG, if the vertex does not exist or there is no edges heading
+    *                          it.
    */
     edgesTo(to) {
         if (undefined === this._edges[to]) {
@@ -123,14 +162,23 @@ class Dag {
         });
         return dag;
     }
+    /**
+    * Find paths down
+    * @param {string} from  the vertex.
+    * @returns  Return array of down paths from vertex
+    */
     findPathsDown(from) {
         let downPath = new DownPath()
         this._down(from, downPath)
         downPath._trim();
         return downPath
     }
+    /**
+    * Remove vertex
+    * @param {string} v  the vertex.
+    * @callback callback return object, stored in vertex
+    */
     removeVertex(v, callback) {
-        // remove edges 'to' the verted
         if (this.V.includes(v)) {
             let obj = this.readObj(v)
             let vx = [v]
@@ -140,12 +188,9 @@ class Dag {
             for (let vertex of vx) {
                 this.removeObj(vertex)
                 if (vertex in this._edges) {
-                    // arrange edges
                     delete this._edges[vertex];
                 }
-                // remove edges 'from' the vertex
                 Object.keys(this._edges).forEach((to) => {
-                    // arrnage edges
                     this._edges[to] = this._edges[to].filter((e) => {
                         return e.from !== vertex;
                     });
@@ -155,13 +200,18 @@ class Dag {
                 });
             }
             if (callback)
-            callback.call(null, obj)
+                callback.call(null, obj)
         }
         else
             throw 'Unknown vertex'
     }
 
-    // remove
+   /**
+    * Remove edge
+    * @param {string} from  the vertex.
+    * @param {string} to  the vertex.
+    * @returns dag
+    */
     removeEdge(from, to) {
         if (!(to in this._edges)) {
             return this;
@@ -185,14 +235,12 @@ class Dag {
         const newDag = new Dag();
         Object.keys(this._edges).forEach((to) => {
             this._edges[to].forEach((e) => {
-                // clone the edge
                 newDag.add(e.from, to);
             });
         });
         this.V.forEach((v) => { if (this.readObj(v)) newDag.saveObj(v, this.readObj(v)) })
         return newDag;
     }
-    // clone
     /**
      * Shallow copy
      * @return new DAG instance which has new arrays (i.e., E, tagObjs, and tagInvertedIndex) but
@@ -203,6 +251,11 @@ class Dag {
         Object.keys(this._edges).forEach((key) => { newDag._edges[key] = this._edges[key]; newDag._storage[key] = this._storage[key] });
         return newDag;
     }
+    /**
+     * Checks if dag is contained in edge
+     * @param {string} from 
+     * @param {string} to 
+     */
     includes(from, to) {
         return this.edge(from, to) !== undefined;
     }

@@ -32,19 +32,16 @@ describe('Obj Test', () => {
             dag.removeObj('b');
             expect(dag.readObj('b')).to.be.undefined
         });
-        // it('should not remove obj from unknown vertex', () => {
-        //     expect(() => dag.removeObj('f')).to.throw('Unknown vertex');;
-        // });
         it('should remove obj if vertex removed', () => {
             dag.saveObj('b', obj);
             dag.removeVertex('b');
             expect(dag.readObj('b')).to.be.undefined
         });
-        
+
         it('should return obj in callback if vertex removed', () => {
             dag.saveObj('b', obj);
-            dag.removeVertex('b',(o) =>{
-                deepEqual(o,obj).should.equal(true)
+            dag.removeVertex('b', (o) => {
+                deepEqual(o, obj).should.equal(true)
             });
         });
     });

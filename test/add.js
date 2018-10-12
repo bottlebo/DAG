@@ -1,9 +1,6 @@
 const Dag = require('../dag');
-
 const CycleError = require('../cycle-error');
-
 const expect = require('chai').expect;
-
 const deepEqual = require('deep-equal');
 
 describe('Addition Test', () => {
@@ -73,6 +70,5 @@ describe('Addition Test', () => {
       dag.order.should.equal(V.length);
       dag.size.should.equal(E.length);
     });
-    
   });
 });

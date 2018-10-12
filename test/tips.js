@@ -1,9 +1,4 @@
 const Dag = require('../dag');
-
-//const CycleError = require('../cycle-error');
-
-//const expect = require('chai').expect;
-
 const deepEqual = require('deep-equal');
 
 describe('Tips Test', () => {
@@ -24,7 +19,7 @@ describe('Tips Test', () => {
     });
 
     it('should return tips', () => {
-        deepEqual(dag.tips, tips).should.equal(true);
-      });
+      deepEqual(dag.tips, tips).should.equal(true);
     });
+  });
 });
