@@ -1,5 +1,4 @@
 const Dag = require('../dag');
-const CycleError = require('../cycle-error');
 const expect = require('chai').expect;
 const deepEqual = require('deep-equal');
 
@@ -54,19 +53,19 @@ describe('Addition Test', () => {
     it('should not have an edge(c, a)', () => expect(dag.edge('c', 'a')).to.be.undefined);
 
     it('should reject a self-loop edge', () => {
-      expect(() => dag.add('a', 'a')).to.throw(CycleError);
+      expect(() => dag.add('a', 'a')).to.throw('DAG has cycle(s)');
       dag.order.should.equal(V.length);
       dag.size.should.equal(E.length);
     });
 
     it('should reject a triangular edge', () => {
-      expect(() => dag.add('d', 'a')).to.throw(CycleError);
+      expect(() => dag.add('d', 'a')).to.throw('DAG has cycle(s)');
       dag.order.should.equal(V.length);
       dag.size.should.equal(E.length);
     });
 
     it('should reject a cyclic edge', () => {
-      expect(() => dag.add('c', 'a')).to.throw(CycleError);
+      expect(() => dag.add('c', 'a')).to.throw('DAG has cycle(s)');
       dag.order.should.equal(V.length);
       dag.size.should.equal(E.length);
     });

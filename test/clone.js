@@ -16,7 +16,7 @@ describe('Clone Test', () => {
     });
 
     it('should do shallow-clone', () => {
-      const cloned = dag.clone();
+      const cloned = dag._clone();
       cloned.should.not.equal(dag);
       cloned._edges.should.not.equal(dag._edges);
       Object.keys(cloned._edges).forEach((key) => {
@@ -25,7 +25,7 @@ describe('Clone Test', () => {
     });
 
     it('should do deep-clone', () => {
-      const cloned = dag.deepClone();
+      const cloned = dag._deepClone();
       cloned.should.not.equal(dag);
       cloned._edges.should.not.equal(dag._edges);
       Object.keys(cloned._edges).forEach((key) => {

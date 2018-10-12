@@ -22,11 +22,8 @@ dag.edgesFrom(from)     // Edges comes from a vertex
 
 let p = dag.findPathsDown(v)        // Return array of down paths from v as p.paths or iterator for(let s of p)
 
-dag.removeVertex(vertex, callback)  // Remove vertex. callback(obj) - obj = object stored in vertex
+dag.removeVertex(vertex, callback)  // Remove vertex. callback(v, obj) - v = removed vertex, obj = object stored in vertex
 dag.removeEdge(from, to)            // Remove edge
-
-dag.deepClone()                     // Deep copy
-dag.clone()                         // Shallow copy
 
 dag.order                           // Verticies length
 dag.size                            // Edges length

@@ -1,5 +1,4 @@
 const Dag = require('../dag');
-const util = require('util')
 const deepEqual = require('deep-equal');
 const expect = require('chai').expect;
 
@@ -29,7 +28,7 @@ describe('Removal Test', () => {
 
     it('should remove each edge', () => {
       E.forEach((edge, index) => {
-        const removedDag = dag.deepClone();
+        const removedDag = dag._deepClone();
         const removedE = E.slice(0);
         removedDag.removeEdge(edge.from, edge.to);
         removedE.splice(index, 1);
@@ -39,14 +38,14 @@ describe('Removal Test', () => {
     });
 
     it('should not remove an edge (e, b) with unknown vertex \'e\'', () => {
-      const removedDag = dag.deepClone();
+      const removedDag = dag._deepClone();
       removedDag.removeEdge('e', 'b');
 
       deepEqual(dag, removedDag).should.equal(true);
     });
 
     it('should not remove non-exist edge (d, a)', () => {
-      const removedDag = dag.deepClone();
+      const removedDag = dag._deepClone();
       removedDag.removeEdge('d', 'a');
 
       deepEqual(dag, removedDag).should.equal(true);
@@ -54,7 +53,7 @@ describe('Removal Test', () => {
 
     it('should remove each vertex', () => {
       Object.keys(D).forEach((deleted) =>{
-        const removedDag = dag.deepClone();
+        const removedDag = dag._deepClone();
         const removedV = [deleted];
         let removedE = E.slice(0);
         removedV.push(...D[deleted])

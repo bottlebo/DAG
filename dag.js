@@ -1,4 +1,3 @@
-const CycleError = require('./cycle-error');
 const DownPath = require('./downPath')
 class Dag {
     constructor() {
@@ -112,7 +111,7 @@ class Dag {
     add(from, to) {
         // test cycle
         if (this._testCycle(from, to)) {
-            throw new CycleError();
+            throw 'DAG has cycle(s)'
         }
         // instantiate an edge
         const edge = {
@@ -180,12 +179,13 @@ class Dag {
     */
     removeVertex(v, callback) {
         if (this.V.includes(v)) {
-            let obj = this.readObj(v)
+
             let vx = [v]
             for (let p of this.findPathsDown(v)) {
                 vx.push(...p.filter(x => vx.indexOf(x) < 0))
             }
             for (let vertex of vx) {
+                let obj = this.readObj(vertex)
                 this.removeObj(vertex)
                 if (vertex in this._edges) {
                     delete this._edges[vertex];
@@ -198,20 +198,20 @@ class Dag {
                     //     delete this._edges[to];
                     // }
                 });
+                if (callback)
+                    callback.call(null, vertex, obj)
             }
-            if (callback)
-                callback.call(null, obj)
         }
         else
             throw 'Unknown vertex'
     }
 
-   /**
-    * Remove edge
-    * @param {string} from  the vertex.
-    * @param {string} to  the vertex.
-    * @returns dag
-    */
+    /**
+     * Remove edge
+     * @param {string} from  the vertex.
+     * @param {string} to  the vertex.
+     * @returns dag
+     */
     removeEdge(from, to) {
         if (!(to in this._edges)) {
             return this;
@@ -231,7 +231,7 @@ class Dag {
    * Deep copy
    * @return new DAG instance without references from the original pieces, at all.
    */
-    deepClone() {
+    _deepClone() {
         const newDag = new Dag();
         Object.keys(this._edges).forEach((to) => {
             this._edges[to].forEach((e) => {
@@ -246,7 +246,7 @@ class Dag {
      * @return new DAG instance which has new arrays (i.e., E, tagObjs, and tagInvertedIndex) but
      * their elements (i.e., E['a'], ... and tagObjs['friend'], ...).
      */
-    clone() {
+    _clone() {
         const newDag = new Dag();
         Object.keys(this._edges).forEach((key) => { newDag._edges[key] = this._edges[key]; newDag._storage[key] = this._storage[key] });
         return newDag;

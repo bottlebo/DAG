@@ -8,15 +8,22 @@ describe('Obj Test', () => {
         let V = [];
         let obj = {};
         let E = [];
+        let objs = [];
 
         beforeEach(() => {
             dag = new Dag();
-            V = ['a', 'b', 'c', 'd'];
+            V = ['a', 'b', 'c', 'd', 'e', 'f', 'x', 'y'];
             obj = { t: ['a'], f: { r: [1, 2, 3] } };
+            objs['a'] = obj
+            objs['b'] = {t:['b']}
             E.push({ from: 'a', to: 'b' });
             E.push({ from: 'b', to: 'c' });
-            E.push({ from: 'd', to: 'b' });
             E.push({ from: 'a', to: 'd' });
+            E.push({ from: 'd', to: 'e' });
+            E.push({ from: 'e', to: 'f' });
+            E.push({ from: 'd', to: 'x' });
+            E.push({ from: 'x', to: 'y' });
+            E.push({ from: 'b', to: 'e' });
             E.forEach(e => dag.add(e.from, e.to));
         });
 
@@ -39,9 +46,10 @@ describe('Obj Test', () => {
         });
 
         it('should return obj in callback if vertex removed', () => {
-            dag.saveObj('b', obj);
-            dag.removeVertex('b', (o) => {
-                deepEqual(o, obj).should.equal(true)
+            dag.saveObj('b', objs['b']);
+            dag.saveObj('a', objs['a']);
+            dag.removeVertex('b', (v, o) => {
+                deepEqual(o, objs[v]).should.equal(true)
             });
         });
     });
