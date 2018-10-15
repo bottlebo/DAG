@@ -106,6 +106,17 @@ class Dag {
     }
 
     /**
+     * 
+     */
+    addVertex(v){
+        if(this._edges[v] === undefined){
+            this._edges[v] = []
+        }
+        else
+            throw 'Already exist'
+    }
+
+    /**
     * Add edge to dag
     * @param {string} from  the edge from.
     * @param {string} to  the edge to.
