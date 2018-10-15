@@ -106,10 +106,11 @@ class Dag {
     }
 
     /**
-     * 
+     * Add single vertex
+     * @param {string} v the vertex
      */
     addVertex(v){
-        if(this._edges[v] === undefined){
+        if(!this.V.includes(v)){
             this._edges[v] = []
         }
         else
