@@ -17,7 +17,8 @@ class Dag {
     * @returns length of dag edges
     */
     get size() {
-        return Object.keys(this._edges).reduce((previous, key) => previous + this._edges[key].length, 0);
+        return Object.keys(this._edges)
+            .reduce((previous, key) => previous + this._edges[key].length, 0);
     }
 
     /**
@@ -80,7 +81,6 @@ class Dag {
     /**
     * Remove object from vertex
     * @param {string} v  the vertex.
-    * 
     */
     removeObj(v) {
         if (this._storage[v])
@@ -117,7 +117,7 @@ class Dag {
         }
         const edge = {
             from: from
-        };
+        }
         if (this._edges[to] === undefined) {
             this._edges[to] = [];
         }
@@ -148,7 +148,8 @@ class Dag {
      * Edges comes from a vertex
      * @param {string} from     the vertex.
      * @returns {@type {Dag}}   deep cloned edges start at the vertex 'from'.
-     *                          empty DAG, if the vertex does not exist or there is no edges from it.
+     *                          empty DAG, if the vertex does not exist
+     *                          or there is no edges from it.
      */
     edgesFrom(from) {
         const dag = new Dag();
@@ -181,7 +182,6 @@ class Dag {
     * @callback callback return object, stored in vertex
     */
     removeVertex(v, callback) {
-
         if (this.V.includes(v)) {
             const vx = [v]
             for (let p of this.findPathsDown(v)) {
@@ -246,7 +246,9 @@ class Dag {
      */
     _clone() {
         const newDag = new Dag();
-        Object.keys(this._edges).forEach((key) => { newDag._edges[key] = this._edges[key]; newDag._storage[key] = this._storage[key] });
+        Object.keys(this._edges).forEach((key) => {
+             newDag._edges[key] = this._edges[key]; newDag._storage[key] = this._storage[key] 
+            });
         return newDag;
     }
 
@@ -275,7 +277,8 @@ class Dag {
     /**
       * @param {string} start - starting point of reverse-BFS
       * @callback hitCondition - condition to stop traversal
-      * @callback callback - task to do for each visit. The visit stopping the traversal is exclusive.
+      * @callback callback - task to do for each visit.
+      *  The visit stopping the traversal is exclusive.
       */
     _reverseBFS(start, hitCondition, callback) {
         const q = [start];
