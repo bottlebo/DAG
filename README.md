@@ -20,9 +20,11 @@ dag.tips                // Return tips
 dag.edgesTo(to)         // Edges go to a vertex
 dag.edgesFrom(from)     // Edges comes from a vertex
 
-let p = dag.findPathsDown(v)        // Return array of down paths from v as p.paths or iterator for(let s of p)
+let p = dag.findPathsDown(v)        // Return array of down paths from v as p.paths
+                                    // or iterator for(let s of p)
 
-dag.removeVertex(vertex, callback)  // Remove vertex. callback(v, obj) - v = removed vertex, obj = object stored in vertex
+dag.removeVertex(vertex, callback)  // Remove vertex. callback(v, obj)
+                                    // v = removed vertex, obj = object stored in vertex
 dag.removeEdge(from, to)            // Remove edge
 
 dag.order                           // Verticies length
