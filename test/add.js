@@ -12,7 +12,6 @@ describe('Addition Test', () => {
 
     beforeEach(() => {
       dag = new Dag();
-      console.log(dag.size)
       V = ['a', 'b', 'c', 'd'];
       E = [];
       E.push({ from: 'a', to: 'b' });
