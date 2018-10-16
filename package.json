@@ -1,6 +1,6 @@
 {
   "name": "dagjs",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "Simiple DAG (Directed Acyclic Graph) module with edge tagging",
   "main": "index.js",
   "directories": {
@@ -38,10 +38,8 @@
     "deep-equal": "^1.0.1",
     "eslint": "^5.7.0",
     "eslint-config-airbnb": "^15.1.0",
-
     "eslint-plugin-chai-expect": "^1.1.1",
     "eslint-plugin-import": "^2.14.0",
-  
     "gulp": "^3.9.1",
     "gulp-eslint": "^4.0.0",
     "istanbul": "^0.4.5",
