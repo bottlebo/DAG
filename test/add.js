@@ -41,10 +41,7 @@ describe('Addition Test', () => {
 
       _dag.size.should.equal(E.length);
       _dag.E.length.should.equal(E.length);
-
-     dag._edges.forEach((e) => {
-       _dag.includes(e.from, e.to).should.equal(true)
-     })
+     
      deepEqual(dag, _dag).should.equal(true);
     });
 
