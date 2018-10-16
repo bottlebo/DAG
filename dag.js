@@ -73,8 +73,7 @@ class Dag {
      *
     */
     saveObj(v, obj) {
-        if (!this.V.includes(v))
-            throw 'Unknown vertex'
+        if (!this.V.includes(v)) throw 'Unknown vertex'
         this._storage[v] = obj
     }
 
@@ -109,12 +108,11 @@ class Dag {
      * Add single vertex
      * @param {string} v the vertex
      */
-    addVertex(v){
-        if(!this.V.includes(v)){
+    addVertex(v) {
+        if (!this.V.includes(v)) {
             this._edges[v] = []
         }
-        else
-            throw 'Already exist'
+        else throw 'Already exist'
     }
 
     /**
@@ -133,7 +131,10 @@ class Dag {
         if (this._edges[to] === undefined) {
             this._edges[to] = [];
         }
-        this._edges[to].push(edge);
+        if(this._edges[to].find(e => e.from === from) === undefined)
+            this._edges[to].push(edge);
+        if(this._edges[from] !== undefined && this._edges[from].length == 0)
+            delete this._edges[from]
         return this;
     }
 
@@ -214,8 +215,7 @@ class Dag {
                     callback.call(null, vertex, obj)
             }
         }
-        else
-            throw 'Unknown vertex'
+        else throw 'Unknown vertex'
     }
 
     /**
@@ -259,8 +259,8 @@ class Dag {
     _clone() {
         const newDag = new Dag();
         Object.keys(this._edges).forEach((key) => {
-             newDag._edges[key] = this._edges[key]; newDag._storage[key] = this._storage[key] 
-            });
+            newDag._edges[key] = this._edges[key]; newDag._storage[key] = this._storage[key]
+        });
         return newDag;
     }
 
