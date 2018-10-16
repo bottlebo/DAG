@@ -10,6 +10,7 @@ dag.V                               // return verticies
 dag.E                               // return edges
 
 dag.add(from, to)                   // add edge
+dad.addVertex(v)                    // add vertex
 
 dag.saveObj(v, obj)                 // Save object in vertex
 dag.readObj(v)                      // Read object from vertex
