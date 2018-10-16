@@ -15,16 +15,16 @@ describe('Addition Test', () => {
       console.log(dag.size)
       V = ['a', 'b', 'c', 'd'];
       E = [];
-      E.push({ from: 'a', to: 'b' });
-      E.push({ from: 'b', to: 'c' });
-      E.push({ from: 'd', to: 'b' });
-      E.push({ from: 'a', to: 'd' });
+      E.push({from: 'a', to: 'b'});
+      E.push({from: 'b', to: 'c'});
+      E.push({from: 'd', to: 'b'});
+      E.push({from: 'a', to: 'd'});
       E.forEach(e => dag.add(e.from, e.to));
     });
 
     it('should add single vertices', () => {
       let _dag = new Dag()
-      V.forEach(v => _dag.addVertex(v) )
+      V.forEach(v => _dag.addVertex(v))
       _dag.order.should.equal(V.length)
       _dag.V.length.should.equal(V.length)
       _dag.V.forEach(v => V.should.include(v))
@@ -34,7 +34,7 @@ describe('Addition Test', () => {
 
     it('should add edges between vertices single vertices', () => {
       let _dag = new Dag()
-      V.forEach(v => _dag.addVertex(v) )
+      V.forEach(v => _dag.addVertex(v))
       E.forEach(e => _dag.add(e.from, e.to));
       _dag.order.should.equal(V.length);
       _dag.V.length.should.equal(V.length);
@@ -43,10 +43,10 @@ describe('Addition Test', () => {
       _dag.size.should.equal(E.length);
       _dag.E.length.should.equal(E.length);
 
-     dag._edges.forEach((e) => {
-       _dag.includes(e.from, e.to).should.equal(true)
-     })
-     deepEqual(dag, _dag).should.equal(true);
+      dag.E.forEach((e) => {
+        _dag.includes(e.from, e.to).should.equal(true)
+      })
+      deepEqual(dag, _dag).should.equal(true);
     });
 
     it('should have 4 verticies', () => {
