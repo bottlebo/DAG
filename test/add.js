@@ -1,6 +1,7 @@
 const Dag = require('../dag');
 const expect = require('chai').expect;
 const deepEqual = require('deep-equal');
+const util = require('util')
 
 describe('Addition Test', () => {
   describe('DAG(order=4, size=4)', () => {
@@ -10,7 +11,9 @@ describe('Addition Test', () => {
 
     beforeEach(() => {
       dag = new Dag();
+      console.log(dag.size)
       V = ['a', 'b', 'c', 'd'];
+      E = [];
       E.push({ from: 'a', to: 'b' });
       E.push({ from: 'b', to: 'c' });
       E.push({ from: 'd', to: 'b' });
@@ -18,6 +21,32 @@ describe('Addition Test', () => {
       E.forEach(e => dag.add(e.from, e.to));
     });
 
+    it('should add single vertices', () => {
+      let _dag = new Dag()
+      V.forEach(v => _dag.addVertex(v) )
+      _dag.order.should.equal(V.length)
+      _dag.V.length.should.equal(V.length)
+      _dag.V.forEach(v => V.should.include(v))
+      _dag.size.should.equal(0)
+      _dag.E.length.should.equal(0)
+    });
+
+    it('should add edges between vertices single vertices', () => {
+      let _dag = new Dag()
+      V.forEach(v => _dag.addVertex(v) )
+      E.forEach(e => _dag.add(e.from, e.to));
+      _dag.order.should.equal(V.length);
+      _dag.V.length.should.equal(V.length);
+      _dag.V.forEach(v => V.should.include(v));
+
+      _dag.size.should.equal(E.length);
+      _dag.E.length.should.equal(E.length);
+
+     dag._edges.forEach((e) => {
+       _dag.includes(e.from, e.to).should.equal(true)
+     })
+     deepEqual(dag, _dag).should.equal(true);
+    });
 
     it('should have 4 verticies', () => {
       dag.order.should.equal(V.length);
@@ -42,11 +71,7 @@ describe('Addition Test', () => {
     it('should have the edges', () => {
       E.forEach((e) => {
         const actual = dag.edge(e.from, e.to);
-        let expected = e;
-        if (!Array.isArray(e.tags)) {
-          expected = { from: e.from, to: e.to };
-        }
-        actual.should.deep.equal(expected);
+        actual.should.deep.equal(e);
       });
     });
 
