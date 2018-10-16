@@ -1,8 +1,8 @@
 const DownPath = require('./downPath')
 class Dag {
     constructor() {
-        this._edges = {};
-        this._storage = {};
+        this._edges = [];
+        this._storage = [];
     }
 
     /**
