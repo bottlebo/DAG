@@ -4,12 +4,12 @@ const deepEqual = require('deep-equal');
 describe('Tips Test', () => {
   describe('DAG(order=4, size=4)', () => {
     let dag;
-    let V = [];
     let tips = [];
     let E = [];
 
     beforeEach(() => {
       dag = new Dag();
+      E = []
       tips = ['a'];
       E.push({ from: 'a', to: 'b' });
       E.push({ from: 'b', to: 'c' });

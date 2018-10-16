@@ -12,6 +12,7 @@ describe('Obj Test', () => {
 
         beforeEach(() => {
             dag = new Dag();
+            E = []
             V = ['a', 'b', 'c', 'd', 'e', 'f', 'x', 'y'];
             obj = { t: ['a'], f: { r: [1, 2, 3] } };
             objs['a'] = obj

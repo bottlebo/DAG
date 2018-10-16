@@ -3,11 +3,11 @@ const Dag = require('../dag');
 describe('Order and Size Test', () => {
     describe('DAG(order=8, size=8)', () => {
         let dag;
-        let E = [];
+        let E;
 
         beforeEach(() => {
             dag = new Dag();
-
+            E = []
             E.push({ from: 'a', to: 'b' });
             E.push({ from: 'b', to: 'c' });
             E.push({ from: 'a', to: 'd' });

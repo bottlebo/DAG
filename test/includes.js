@@ -3,9 +3,10 @@ const expect = require('chai').expect;
 describe('Paths Down Test', () => {
     describe('DAG(order=8, size=8)', () => {
         let dag;
-        let E = [];
+        let E;
 
         beforeEach(() => {
+            E = [];
             dag = new Dag();
 
             E.push({ from: 'a', to: 'b' });

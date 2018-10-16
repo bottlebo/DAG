@@ -4,11 +4,11 @@ const deepEqual = require('deep-equal');
 describe('Paths Down Test', () => {
     describe('DAG(order=8, size=8)', () => {
         let dag;
-        let V = [];
-        let E = [];
+        let E;
         let paths = []
 
         beforeEach(() => {
+            E = []
             paths['d'] = [['a']]
             paths['e'] = [['d', 'a'], ['b', 'a']]
             paths['y'] = [['x', 'd', 'a']]
