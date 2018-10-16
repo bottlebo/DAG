@@ -1,8 +1,8 @@
 const DownPath = require('./downPath')
 class Dag {
     constructor() {
-        this._edges = [];
-        this._storage = [];
+        this._edges = {};
+        this._storage = {};
     }
 
     /**
@@ -131,9 +131,9 @@ class Dag {
         if (this._edges[to] === undefined) {
             this._edges[to] = [];
         }
-        if(this._edges[to].find(e => e.from === from) === undefined)
+        if (this._edges[to].find(e => e.from === from) === undefined)
             this._edges[to].push(edge);
-        if(this._edges[from] !== undefined && this._edges[from].length == 0)
+        if (this._edges[from] !== undefined && this._edges[from].length == 0)
             delete this._edges[from]
         return this;
     }
@@ -275,15 +275,18 @@ class Dag {
 
     _down(from, dp) {
         const to = []
-        this._edges[from].forEach((f) => { to.push(f.from) })
-        to.forEach((v) => {
-            dp._add(v)
-            if (Object.keys(this.edgesTo(v)._edges).length > 0) this._down(v, dp);
-            else {
-                dp._nextPath()
-                return
-            }
-        })
+        if (this._edges[from]) {
+            this._edges[from].forEach((f) => { to.push(f.from) })
+            to.forEach((v) => {
+                dp._add(v)
+                if (Object.keys(this.edgesTo(v)._edges).length > 0) this._down(v, dp);
+                else {
+                    dp._nextPath()
+                    return
+                }
+            })
+        }
+        else  return
     }
 
     /**
