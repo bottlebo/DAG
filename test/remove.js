@@ -68,9 +68,18 @@ describe('Removal Test', () => {
         removedDag.size.should.equal(removedE.length);
       })
     });
-    //
+    
     it('should not remove unknown vertex', () => {
       expect(() => dag.removeVertex('t')).to.throw('Unknown vertex');;
     });
+
+    it('should  remove single vertex ', () => {
+      const removedDag = dag._deepClone();
+      removedDag.addVertex('z')
+      removedDag.removeVertex('z');
+
+      deepEqual(dag, removedDag).should.equal(true);
+    });
+
   });
 });
