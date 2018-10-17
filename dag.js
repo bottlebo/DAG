@@ -184,11 +184,16 @@ class Dag {
 	*/
 	findPathsDown(from) {
 		const downPath = new DownPath()
+		downPath._add(from)
 		this._down(from, downPath)
+		return downPath
+	}
+	findPathsUp(from) {
+		const downPath = new DownPath()
+		this._up(from, downPath)
 		downPath._trim();
 		return downPath
 	}
-
 	/**
 	* Remove vertex
 	* @param {string} v  the vertex.
@@ -197,7 +202,7 @@ class Dag {
 	removeVertex(v, callback) {
 		if (this.V.includes(v)) {
 			const vx = [v]
-			for (let p of this.findPathsDown(v)) {
+			for (let p of this.findPathsUp(v)) {
 				vx.push(...p.filter(x => vx.indexOf(x) < 0))
 			}
 			for (let vertex of vx) {
@@ -274,12 +279,34 @@ class Dag {
 	}
 
 	_down(from, dp) {
+		let to = Object.keys(this.edgesFrom(from)._edges)
+		if (to.length == 0) return
+		let _dp = dp.paths.slice()
+		for (let p of _dp) {
+			let f = p[p.length - 1]
+			let to = Object.keys(this.edgesFrom(f)._edges)
+			if (to.length > 0) {
+				for (let i = 1; i < to.length; i++) {
+					dp._nextPath()
+					dp.paths[dp._index].push(...p)
+					dp._add(to[i])
+				}
+				p.push(to[0])
+			}
+		}
+		for (let p of dp.paths) {
+			let v = p[p.length - 1]
+			if (Object.keys(this.edgesFrom(v)._edges).length == 0) continue
+			this._down(v, dp, 1)
+		}
+	}
+	_up(from, dp) {
 		const to = []
 		if (this._edges[from]) {
 			this._edges[from].forEach((f) => { to.push(f.from) })
 			to.forEach((v) => {
 				dp._add(v)
-				if (Object.keys(this.edgesTo(v)._edges).length > 0) this._down(v, dp);
+				if (Object.keys(this.edgesTo(v)._edges).length > 0) this._up(v, dp);
 				else {
 					dp._nextPath()
 					return
@@ -288,7 +315,6 @@ class Dag {
 		}
 		else return
 	}
-
 	/**
 	  * @param {string} start - starting point of reverse-BFS
 	  * @callback hitCondition - condition to stop traversal
