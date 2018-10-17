@@ -190,8 +190,9 @@ class Dag {
 	}
 	findPathsUp(from) {
 		const downPath = new DownPath()
-		this._up(from, downPath)
-		downPath._trim();
+		downPath._add(from)
+		this._up( downPath)
+		//downPath._trim();
 		return downPath
 	}
 	/**
@@ -297,23 +298,29 @@ class Dag {
 		for (let p of dp.paths) {
 			let v = p[p.length - 1]
 			if (Object.keys(this.edgesFrom(v)._edges).length == 0) continue
-			this._down(v, dp, 1)
+			this._down(v, dp)
 		}
 	}
-	_up(from, dp) {
-		const to = []
-		if (this._edges[from]) {
-			this._edges[from].forEach((f) => { to.push(f.from) })
-			to.forEach((v) => {
-				dp._add(v)
-				if (Object.keys(this.edgesTo(v)._edges).length > 0) this._up(v, dp);
-				else {
+	_up(dp) {
+		let _dp = dp.paths.slice()
+		for (let p of _dp) {
+			let f = p[p.length - 1]
+			if (this._edges[f] === undefined || this._edges[f].length == 0) continue
+			let to = this._edges[f].reduce((p,v) => {p.push(v.from); return p}, [])
+			if (to.length > 0) {
+				for (let i = 1; i < to.length; i++) {
 					dp._nextPath()
-					return
+					dp.paths[dp._index].push(...p)
+					dp._add(to[i])
 				}
-			})
+				p.push(to[0])
+			}
 		}
-		else return
+		for (let p of dp.paths) {
+			let v = p[p.length - 1]
+			if (this._edges[v] === undefined || this._edges[v].length == 0) continue
+			this._up( dp)
+		}
 	}
 	/**
 	  * @param {string} start - starting point of reverse-BFS
