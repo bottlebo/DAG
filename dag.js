@@ -190,6 +190,11 @@ class Dag {
     return downPath
   }
 
+ /**
+   * Find paths up
+   * @param {string} from  the vertex.
+   * @returns  Return array of up paths from vertex
+   */
   findPathsUp(from) {
     const downPath = new DownPath()
     downPath._add(from)
