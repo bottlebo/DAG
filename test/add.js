@@ -1,6 +1,6 @@
 const Dag = require('../dag');
 const expect = require('chai').expect;
-require('chai').should();
+// require('chai').should();
 const deepEqual = require('deep-equal');
 const util = require('util')
 
