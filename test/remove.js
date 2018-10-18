@@ -11,9 +11,9 @@ describe('Removal Test', () => {
 
     beforeEach(() => {
       dag = new Dag();
-      V = ['a', 'b', 'c', 'd','e', 'f', 'x', 'y'];
+      V = ['a', 'b', 'c', 'd', 'e', 'f', 'x', 'y'];
       D['d'] = ['a']
-      D['e'] = ['a','d','b']
+      D['e'] = ['a', 'd', 'b']
       E = [];
       E.push({ from: 'a', to: 'b' });
       E.push({ from: 'b', to: 'c' });
@@ -52,15 +52,15 @@ describe('Removal Test', () => {
     });
 
     it('should remove each vertex', () => {
-      Object.keys(D).forEach((deleted) =>{
+      Object.keys(D).forEach((deleted) => {
         const removedDag = dag._deepClone();
         const removedV = [deleted];
         let removedE = E.slice(0);
         removedV.push(...D[deleted])
-        const vx = V.filter(x=>{ return removedV.indexOf(x) < 0})
+        const vx = V.filter(x => { return removedV.indexOf(x) < 0 })
         removedDag.removeVertex(deleted);
-        removedDag.V.forEach(v=>removedV.should.not.includes(v))
-        removedDag.V.forEach(v=>vx.should.includes(v))
+        removedDag.V.forEach(v => removedV.should.not.includes(v))
+        removedDag.V.forEach(v => vx.should.includes(v))
 
         removedE = removedE.filter(e => removedV.indexOf(e.from) < 0 && removedV.indexOf(e.to) < 0);
         removedE.forEach(e => removedDag.edge(e.from, e.to).should.deep.equal(e));
@@ -68,9 +68,18 @@ describe('Removal Test', () => {
         removedDag.size.should.equal(removedE.length);
       })
     });
-    //
+    
     it('should not remove unknown vertex', () => {
       expect(() => dag.removeVertex('t')).to.throw('Unknown vertex');;
     });
+
+    it('should  remove single vertex ', () => {
+      const removedDag = dag._deepClone();
+      removedDag.addVertex('z')
+      removedDag.removeVertex('z');
+
+      deepEqual(dag, removedDag).should.equal(true);
+    });
+
   });
 });

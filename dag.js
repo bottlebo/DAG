@@ -184,11 +184,17 @@ class Dag {
 	*/
 	findPathsDown(from) {
 		const downPath = new DownPath()
+		downPath._add(from)
 		this._down(from, downPath)
-		downPath._trim();
 		return downPath
 	}
-
+	findPathsUp(from) {
+		const downPath = new DownPath()
+		downPath._add(from)
+		this._up( downPath)
+		//downPath._trim();
+		return downPath
+	}
 	/**
 	* Remove vertex
 	* @param {string} v  the vertex.
@@ -197,7 +203,7 @@ class Dag {
 	removeVertex(v, callback) {
 		if (this.V.includes(v)) {
 			const vx = [v]
-			for (let p of this.findPathsDown(v)) {
+			for (let p of this.findPathsUp(v)) {
 				vx.push(...p.filter(x => vx.indexOf(x) < 0))
 			}
 			for (let vertex of vx) {
@@ -274,21 +280,48 @@ class Dag {
 	}
 
 	_down(from, dp) {
-		const to = []
-		if (this._edges[from]) {
-			this._edges[from].forEach((f) => { to.push(f.from) })
-			to.forEach((v) => {
-				dp._add(v)
-				if (Object.keys(this.edgesTo(v)._edges).length > 0) this._down(v, dp);
-				else {
+		let to = Object.keys(this.edgesFrom(from)._edges)
+		if (to.length == 0) return
+		let _dp = dp.paths.slice()
+		for (let p of _dp) {
+			let f = p[p.length - 1]
+			let to = Object.keys(this.edgesFrom(f)._edges)
+			if (to.length > 0) {
+				for (let i = 1; i < to.length; i++) {
 					dp._nextPath()
-					return
+					dp.paths[dp._index].push(...p)
+					dp._add(to[i])
 				}
-			})
+				p.push(to[0])
+			}
 		}
-		else return
+		for (let p of dp.paths) {
+			let v = p[p.length - 1]
+			if (Object.keys(this.edgesFrom(v)._edges).length == 0) continue
+			this._down(v, dp)
+		}
 	}
-
+	_up(dp) {
+		let _dp = dp.paths.slice()
+		for (let p of _dp) {
+			let f = p[p.length - 1]
+			if (this._edges[f] === undefined || this._edges[f].length == 0) continue
+			let to = this._edges[f].reduce((p,v) => {p.push(v.from); return p}, [])
+			if (to.length > 0) {
+				for (let i = 1; i < to.length; i++) {
+					dp._nextPath()
+					dp.paths[dp._index].push(...p)
+					dp._add(to[i])
+				}
+				p.push(to[0])
+			}
+		}
+		for (let p of dp.paths) {
+			let v = p[p.length - 1]
+			if (this._edges[v] === undefined || this._edges[v].length == 0) continue
+			this._up( dp)
+		}
+	}
 	/**
 	  * @param {string} start - starting point of reverse-BFS
 	  * @callback hitCondition - condition to stop traversal
