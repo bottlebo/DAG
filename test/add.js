@@ -1,6 +1,6 @@
 const Dag = require('../dag');
 const expect = require('chai').expect;
-require('chai').should();
+// require('chai').should();
 const deepEqual = require('deep-equal');
 const util = require('util')
 
@@ -12,12 +12,13 @@ describe('Addition Test', () => {
 
     beforeEach(() => {
       dag = new Dag();
+      console.log(dag.size)
       V = ['a', 'b', 'c', 'd'];
       E = [];
-      E.push({ from: 'a', to: 'b' });
-      E.push({ from: 'b', to: 'c' });
-      E.push({ from: 'd', to: 'b' });
-      E.push({ from: 'a', to: 'd' });
+      E.push({from: 'a', to: 'b'});
+      E.push({from: 'b', to: 'c'});
+      E.push({from: 'd', to: 'b'});
+      E.push({from: 'a', to: 'd'});
       E.forEach(e => dag.add(e.from, e.to));
     });
 
@@ -41,6 +42,7 @@ describe('Addition Test', () => {
 
       _dag.size.should.equal(E.length);
       _dag.E.length.should.equal(E.length);
+
       dag.E.forEach((e) => {
         _dag.includes(e.from, e.to).should.equal(true)
       })

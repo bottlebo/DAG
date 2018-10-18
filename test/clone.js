@@ -8,10 +8,10 @@ describe('Clone Test', () => {
     beforeEach(() => {
       dag = new Dag();
       E = [];
-      E.push({ from: 'a', to: 'b' });
-      E.push({ from: 'b', to: 'c' });
-      E.push({ from: 'd', to: 'b' });
-      E.push({ from: 'a', to: 'd' });
+      E.push({from: 'a', to: 'b'});
+      E.push({from: 'b', to: 'c'});
+      E.push({from: 'd', to: 'b'});
+      E.push({from: 'a', to: 'd'});
       E.forEach(e => dag.add(e.from, e.to));
     });
 
