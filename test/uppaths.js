@@ -48,15 +48,5 @@ describe('Paths Up Test', () => {
         deepEqual(dag.findPathsUp(p).paths, paths[p]).should.equal(true)
       })
     });
-
-    /* it('should return paths', () => {
-      const _dag = new Dag()
-      _dag.addVertex('g')
-      _dag.addVertex('j')
-
-      Object.keys(paths).forEach((p) => {
-        deepEqual(dag.findPathsDown(p).paths, paths[p]).should.equal(true)
-      }) */
-    //});
   })
 })

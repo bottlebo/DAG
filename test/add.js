@@ -12,13 +12,12 @@ describe('Addition Test', () => {
 
     beforeEach(() => {
       dag = new Dag();
-      console.log(dag.size)
       V = ['a', 'b', 'c', 'd'];
       E = [];
-      E.push({from: 'a', to: 'b'});
-      E.push({from: 'b', to: 'c'});
-      E.push({from: 'd', to: 'b'});
-      E.push({from: 'a', to: 'd'});
+      E.push({ from: 'a', to: 'b' });
+      E.push({ from: 'b', to: 'c' });
+      E.push({ from: 'd', to: 'b' });
+      E.push({ from: 'a', to: 'd' });
       E.forEach(e => dag.add(e.from, e.to));
     });
 
