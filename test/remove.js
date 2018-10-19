@@ -12,8 +12,8 @@ describe('Removal Test', () => {
     beforeEach(() => {
       dag = new Dag();
       V = ['a', 'b', 'c', 'd', 'e', 'f', 'x', 'y'];
-      D['d'] = ['a']
-      D['e'] = ['a', 'd', 'b']
+      // D['d'] = ['a']
+      // D['e'] = ['a', 'd', 'b']
       E = [];
       E.push({ from: 'a', to: 'b' });
       E.push({ from: 'b', to: 'c' });
@@ -51,24 +51,44 @@ describe('Removal Test', () => {
       deepEqual(dag, removedDag).should.equal(true);
     });
 
-    it('should remove each vertex', () => {
-      Object.keys(D).forEach((deleted) => {
-        const removedDag = dag._deepClone();
-        const removedV = [deleted];
-        let removedE = E.slice(0);
-        removedV.push(...D[deleted])
-        const vx = V.filter(x => { return removedV.indexOf(x) < 0 })
-        removedDag.removeVertex(deleted);
-        removedDag.V.forEach(v => removedV.should.not.includes(v))
-        removedDag.V.forEach(v => vx.should.includes(v))
+    it('should remove all vertex', () => {
+      const removedDag = dag._deepClone();
+      let removedE = E.slice(0);
+      let removedV = V.slice(0)
 
-        removedE = removedE.filter(e => removedV.indexOf(e.from) < 0 && removedV.indexOf(e.to) < 0);
-        removedE.forEach(e => removedDag.edge(e.from, e.to).should.deep.equal(e));
-        removedDag.order.should.equal(vx.length);
+      V.forEach((vertex) => {
+        let target = removedV.findIndex(v => v == vertex)
+        removedV.splice(target, 1)
+        removedE = removedE.filter(e => e.from !== vertex && e.to !== vertex);
+        removedDag.removeVertex(vertex)
+        deepEqual(removedDag.V, removedV).should.equal(true)
         removedDag.size.should.equal(removedE.length);
+        removedE.forEach(e => removedDag.edge(e.from, e.to).should.deep.equal(e));
+
       })
     });
-    
+
+    it('should remove each vertex', () => {
+      V.forEach((vertex) => {
+        // clone dag and E
+        const removedDag = dag._deepClone();
+        //const removedV = [];
+        let removedE = E.slice(0);
+
+        // remove from clones
+        removedDag.removeVertex(vertex);
+        const removedV = dag.V.filter(v => v != vertex)
+        removedE = removedE.filter(e => e.from !== vertex && e.to !== vertex);
+
+        // check the removal
+        removedDag.order.should.equal(removedV.length);
+        removedDag.V.forEach(v => removedV.should.includes(v));
+        removedDag.V.should.not.includes(vertex)
+        removedDag.size.should.equal(removedE.length);
+        removedE.forEach(e => removedDag.edge(e.from, e.to).should.deep.equal(e));
+      });
+    });
+
     it('should not remove unknown vertex', () => {
       expect(() => dag.removeVertex('t')).to.throw('Unknown vertex');;
     });
