@@ -152,7 +152,7 @@ class Dag {
     }
     const dag = new Dag();
     this._edges[to].forEach((e) => {
-      const cloned = {from: e.from, to};
+      const cloned = { from: e.from, to };
       dag.add(cloned.from, cloned.to);
     });
     return dag;
@@ -170,7 +170,7 @@ class Dag {
     Object.keys(this._edges).forEach((key) => {
       this._edges[key].forEach((e) => {
         if (e.from === from) {
-          const cloned = {from: e.from, to: key};
+          const cloned = { from: e.from, to: key };
           dag.add(cloned.from, cloned.to);
         }
       });
@@ -190,11 +190,11 @@ class Dag {
     return downPath
   }
 
- /**
-   * Find paths up
-   * @param {string} from  the vertex.
-   * @returns  Return array of up paths from vertex
-   */
+  /**
+    * Find paths up
+    * @param {string} from  the vertex.
+    * @returns  Return array of up paths from vertex
+    */
   findPathsUp(from) {
     const downPath = new DownPath()
     downPath._add(from)
@@ -208,26 +208,26 @@ class Dag {
    * @param {string} v  the vertex.
    * @callback callback return object, stored in vertex
    */
-  removeVertex(v, callback) {
-    if (this.V.includes(v)) {
-      const vx = [v]
-      for (let p of this.findPathsUp(v)) {
-        vx.push(...p.filter(x => vx.indexOf(x) < 0))
+  removeVertex(vertex, callback) {
+    if (this.V.includes(vertex)) {
+      // const vx = [v]
+      // for (let p of this.findPathsUp(v)) {
+      //   vx.push(...p.filter(x => vx.indexOf(x) < 0))
+      // }
+      //for (let vertex of vx) {
+      let obj = this.readObj(vertex)
+      this.removeObj(vertex)
+      if (vertex in this._edges) {
+        delete this._edges[vertex];
       }
-      for (let vertex of vx) {
-        let obj = this.readObj(vertex)
-        this.removeObj(vertex)
-        if (vertex in this._edges) {
-          delete this._edges[vertex];
-        }
-        Object.keys(this._edges).forEach((to) => {
-          this._edges[to] = this._edges[to].filter((e) => {
-            return e.from !== vertex;
-          });
+      Object.keys(this._edges).forEach((to) => {
+        this._edges[to] = this._edges[to].filter((e) => {
+          return e.from !== vertex;
         });
-        if (callback)
-          callback.call(null, vertex, obj)
-      }
+      });
+      if (callback)
+        callback.call(null, vertex, obj)
+      //}
     }
     else throw 'Unknown vertex'
   }
