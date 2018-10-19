@@ -1,4 +1,4 @@
-const DownPath = require('./downPath')
+const Path = require('./path')
 
 class Dag {
   constructor() {
@@ -184,7 +184,7 @@ class Dag {
    * @returns  Return array of down paths from vertex
    */
   findPathsDown(from) {
-    const downPath = new DownPath()
+    const downPath = new Path()
     downPath._add(from)
     this._down(from, downPath)
     return downPath
@@ -196,7 +196,7 @@ class Dag {
     * @returns  Return array of up paths from vertex
     */
   findPathsUp(from) {
-    const downPath = new DownPath()
+    const downPath = new Path()
     downPath._add(from)
     this._up(downPath)
     //downPath._trim();

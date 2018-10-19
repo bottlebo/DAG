@@ -1,4 +1,4 @@
-class DownPath {
+class Path {
   constructor() {
     this.paths = []
     this._index = 0
@@ -28,4 +28,4 @@ class DownPath {
   };
 }
 
-module.exports = DownPath;
+module.exports = Path;
