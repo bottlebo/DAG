@@ -48,7 +48,7 @@ describe('Addition Test', () => {
       deepEqual(dag, _dag).should.equal(true);
     });
 
-    it('should have 4 verticies', () => {
+    it('should have 4 vertices', () => {
       dag.order.should.equal(V.length);
       dag.V.length.should.equal(V.length);
       dag.V.forEach(v => V.should.include(v));

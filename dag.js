@@ -7,11 +7,11 @@ class Dag {
   }
 
   /**
-   * @returns length of dag verticies
+   * @returns length of dag vertices
    */
   get order() {
-    const verticies = this.V;
-    return verticies.length;
+    const vertices = this.V;
+    return vertices.length;
   }
 
   /**
@@ -30,10 +30,10 @@ class Dag {
   }
 
   /**
-   * @returns  dag verticies
+   * @returns  dag vertices
    */
   get V() {
-    const verticies = Object.keys(this._edges).reduce((previous, key) => {
+    const vertices = Object.keys(this._edges).reduce((previous, key) => {
       if (!previous.includes(key)) {
         previous.push(key);
       }
@@ -44,7 +44,7 @@ class Dag {
       });
       return previous;
     }, []);
-    return verticies;
+    return vertices;
   }
 
   /**

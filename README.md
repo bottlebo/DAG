@@ -6,7 +6,7 @@ let Dag = require('dag');
 let dag = new Dag();
 // ...
 
-dag.V                               // return verticies
+dag.V                               // return vertices
 dag.E                               // return edges
 
 dag.add(from, to)                   // add edge
