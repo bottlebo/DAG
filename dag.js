@@ -185,8 +185,10 @@ class Dag {
    */
   findPathsDown(from) {
     const downPath = new DownPath()
-    downPath._add(from)
-    this._down(from, downPath)
+    if (this.V.includes(from)) {
+      downPath._add(from)
+      this._down(from, downPath)
+    }
     return downPath
   }
 
@@ -197,8 +199,10 @@ class Dag {
     */
   findPathsUp(from) {
     const downPath = new DownPath()
-    downPath._add(from)
-    this._up(downPath)
+    if (this.V.includes(from)) {
+      downPath._add(from)
+      this._up(downPath)
+    }
     //downPath._trim();
     return downPath
   }
