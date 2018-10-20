@@ -105,16 +105,6 @@ class Dag {
     return undefined;
   }
 
-  /**
-   * Add single vertex
-   * @param {string} v the vertex
-   */
-  addVertex(v) {
-    if (!this.V.includes(v)) {
-      this._edges[v] = []
-    }
-    else throw 'Already exist'
-  }
 
   /**
    * Add edge to dag
@@ -152,7 +142,7 @@ class Dag {
     }
     const dag = new Dag();
     this._edges[to].forEach((e) => {
-      const cloned = { from: e.from, to };
+      const cloned = {from: e.from, to};
       dag.add(cloned.from, cloned.to);
     });
     return dag;
@@ -170,7 +160,7 @@ class Dag {
     Object.keys(this._edges).forEach((key) => {
       this._edges[key].forEach((e) => {
         if (e.from === from) {
-          const cloned = { from: e.from, to: key };
+          const cloned = {from: e.from, to: key};
           dag.add(cloned.from, cloned.to);
         }
       });
@@ -191,16 +181,36 @@ class Dag {
   }
 
   /**
-    * Find paths up
-    * @param {string} from  the vertex.
-    * @returns  Return array of up paths from vertex
-    */
+   * Find paths up
+   * @param {string} from  the vertex.
+   * @returns  Return array of up paths from vertex
+   */
   findPathsUp(from) {
     const downPath = new Path()
     downPath._add(from)
     this._up(downPath)
     //downPath._trim();
     return downPath
+  }
+
+  /**
+   *
+   * @param v
+   * @returns {*}
+   */
+  hasVertex(v) {
+    return this.V.includes(v);
+  }
+
+  /**
+   * Add single vertex
+   * @param {string} v the vertex
+   */
+  addVertex(v) {
+    if (!this.V.includes(v)) {
+      this._edges[v] = []
+    }
+    else throw 'Already exist'
   }
 
   /**
