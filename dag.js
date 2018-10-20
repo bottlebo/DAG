@@ -1,4 +1,4 @@
-const DownPath = require('./downPath')
+const Path = require('./path')
 
 class Dag {
   constructor() {
@@ -7,11 +7,11 @@ class Dag {
   }
 
   /**
-   * @returns length of dag verticies
+   * @returns length of dag vertices
    */
   get order() {
-    const verticies = this.V;
-    return verticies.length;
+    const vertices = this.V;
+    return vertices.length;
   }
 
   /**
@@ -30,10 +30,10 @@ class Dag {
   }
 
   /**
-   * @returns  dag verticies
+   * @returns  dag vertices
    */
   get V() {
-    const verticies = Object.keys(this._edges).reduce((previous, key) => {
+    const vertices = Object.keys(this._edges).reduce((previous, key) => {
       if (!previous.includes(key)) {
         previous.push(key);
       }
@@ -44,7 +44,7 @@ class Dag {
       });
       return previous;
     }, []);
-    return verticies;
+    return vertices;
   }
 
   /**
@@ -105,16 +105,6 @@ class Dag {
     return undefined;
   }
 
-  /**
-   * Add single vertex
-   * @param {string} v the vertex
-   */
-  addVertex(v) {
-    if (!this.V.includes(v)) {
-      this._edges[v] = []
-    }
-    else throw 'Already exist'
-  }
 
   /**
    * Add edge to dag
@@ -152,7 +142,7 @@ class Dag {
     }
     const dag = new Dag();
     this._edges[to].forEach((e) => {
-      const cloned = { from: e.from, to };
+      const cloned = {from: e.from, to};
       dag.add(cloned.from, cloned.to);
     });
     return dag;
@@ -170,7 +160,7 @@ class Dag {
     Object.keys(this._edges).forEach((key) => {
       this._edges[key].forEach((e) => {
         if (e.from === from) {
-          const cloned = { from: e.from, to: key };
+          const cloned = {from: e.from, to: key};
           dag.add(cloned.from, cloned.to);
         }
       });
@@ -184,7 +174,7 @@ class Dag {
    * @returns  Return array of down paths from vertex
    */
   findPathsDown(from) {
-    const downPath = new DownPath()
+    const downPath = new Path()
     if (this.V.includes(from)) {
       downPath._add(from)
       this._down(from, downPath)
@@ -193,18 +183,38 @@ class Dag {
   }
 
   /**
-    * Find paths up
-    * @param {string} from  the vertex.
-    * @returns  Return array of up paths from vertex
-    */
+   * Find paths up
+   * @param {string} from  the vertex.
+   * @returns  Return array of up paths from vertex
+   */
   findPathsUp(from) {
-    const downPath = new DownPath()
+    const upPath = new Path()
     if (this.V.includes(from)) {
-      downPath._add(from)
-      this._up(downPath)
+      upPath._add(from)
+      this._up(upPath)
     }
     //downPath._trim();
-    return downPath
+    return upPath
+  }
+
+  /**
+   *
+   * @param v
+   * @returns {*}
+   */
+  hasVertex(v) {
+    return this.V.includes(v);
+  }
+
+  /**
+   * Add single vertex
+   * @param {string} v the vertex
+   */
+  addVertex(v) {
+    if (!this.V.includes(v)) {
+      this._edges[v] = []
+    }
+    else throw 'Already exist'
   }
 
   /**
