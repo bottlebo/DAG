@@ -174,7 +174,7 @@ class Dag {
    * @returns  Return array of down paths from vertex
    */
   findPathsDown(from) {
-    const downPath = new DownPath()
+    const downPath = new Path()
     if (this.V.includes(from)) {
       downPath._add(from)
       this._down(from, downPath)
@@ -188,16 +188,13 @@ class Dag {
    * @returns  Return array of up paths from vertex
    */
   findPathsUp(from) {
-    const downPath = new Path()
-    downPath._add(from)
-    this._up(downPath)
-    const downPath = new DownPath()
+    const upPath = new Path()
     if (this.V.includes(from)) {
-      downPath._add(from)
-      this._up(downPath)
+      upPath._add(from)
+      this._up(upPath)
     }
     //downPath._trim();
-    return downPath
+    return upPath
   }
 
   /**

@@ -1,31 +1,43 @@
 class Path {
-  constructor() {
+  constructor () {
     this.paths = []
     this._index = 0
     this.paths[0] = []
   }
 
-  _nextPath(v) {
+  vertices () {
+    if (this._setAllVertices) return this._setAllVertices.values()
+    this._setAllVertices = new Set()
+    for (let path of this.paths) {
+      for (let vertix of path) {
+        this._setAllVertices.add(vertix)
+      }
+    }
+    return this._setAllVertices.values()
+  }
+
+  _nextPath (v) {
     this._index++
     this.paths[this._index] = []
   }
 
-  _add(v) {
+  _add (v) {
     this.paths[this._index].push(v)
   }
 
-  _trim() {
+  _trim () {
     this.paths.splice(this.paths.length - 1, 1)
   }
 
-  [Symbol.iterator]() {
-    var index = -1;
-    var data = this.paths;
+  [Symbol.iterator] () {
+    var index = -1
+    var data = this.paths
 
     return {
       next: () => ({value: data[++index], done: !(index in data)})
-    };
-  };
+    }
+  }
+
 }
 
-module.exports = Path;
+module.exports = Path
