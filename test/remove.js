@@ -102,6 +102,28 @@ describe('Removal Test', () => {
       deepEqual(dag, removedDag).should.equal(true)
     })
 
+    it('should remove to vertex in DAG with only 2 vertices', () => {
+      dag = new Dag()
+      dag.add('a', 'b')
+      dag.removeVertex('b')
+      deepEqual(dag.V, ['a']).should.equal(true)
+    })
+
+    it('should remove from vertex in DAG with only 2 vertices', () => {
+      dag = new Dag()
+      dag.add('a', 'b')
+      dag.removeVertex('a')
+      deepEqual(dag.V, ['b']).should.equal(true)
+    })
+
+    it('should remove to edge in DAG with only 2 vertices', () => {
+      dag = new Dag()
+      const vertices = ['a', 'b']
+      dag.add('a', 'b')
+      dag.removeEdge('a', 'b')
+      expect(dag.edge('a', 'b')).to.be.undefined
+      vertices.forEach((v) => dag.V.includes(v).should.equal(true))
+    })
     it('should  remove vertex in a middle', () => {
       dag.removeVertex('d')
       deepEqual(dag.V, ['b', 'a', 'c', 'e', 'f', 'x', 'y']).should.equal(true)
