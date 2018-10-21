@@ -142,7 +142,7 @@ class Dag {
     }
     const dag = new Dag();
     this._edges[to].forEach((e) => {
-      const cloned = {from: e.from, to};
+      const cloned = { from: e.from, to };
       dag.add(cloned.from, cloned.to);
     });
     return dag;
@@ -160,7 +160,7 @@ class Dag {
     Object.keys(this._edges).forEach((key) => {
       this._edges[key].forEach((e) => {
         if (e.from === from) {
-          const cloned = {from: e.from, to: key};
+          const cloned = { from: e.from, to: key };
           dag.add(cloned.from, cloned.to);
         }
       });
@@ -227,8 +227,8 @@ class Dag {
       const obj = this.readObj(vertex)
       this.removeObj(vertex)
       if (vertex in this._edges) {
-        for(const v of this._edges[vertex]){
-          if(!Object.keys(this._edges).includes(v.from)) {
+        for (const v of this._edges[vertex]) {
+          if (!Object.keys(this._edges).includes(v.from)) {
             this._edges[v.from] = []
           }
         }
@@ -241,7 +241,6 @@ class Dag {
       });
       if (callback)
         callback.call(null, vertex, obj)
-      //}
     }
     else throw 'Unknown vertex'
   }
@@ -260,7 +259,10 @@ class Dag {
     if (targetIndex === -1) {
       return this;
     }
-    this._edges[to].splice(targetIndex, 1)[0];
+    if (!Object.keys(this._edges).includes(from)) {
+      this._edges[from] = []
+    }
+    this._edges[to].splice(targetIndex, 1)[0]
     return this;
   }
 
@@ -278,7 +280,7 @@ class Dag {
     this.V.forEach((v) => {
       if (this.readObj(v)) newDag.saveObj(v, this.readObj(v))
     })
-    return newDag;
+    return newDag
   }
 
   /**
