@@ -15,14 +15,14 @@ describe('Removal Test', () => {
       // D['d'] = ['a']
       // D['e'] = ['a', 'd', 'b']
       E = []
-      E.push({from: 'a', to: 'b'})
-      E.push({from: 'b', to: 'c'})
-      E.push({from: 'a', to: 'd'})
-      E.push({from: 'd', to: 'e'})
-      E.push({from: 'e', to: 'f'})
-      E.push({from: 'd', to: 'x'})
-      E.push({from: 'x', to: 'y'})
-      E.push({from: 'b', to: 'e'})
+      E.push({ from: 'a', to: 'b' })
+      E.push({ from: 'b', to: 'c' })
+      E.push({ from: 'a', to: 'd' })
+      E.push({ from: 'd', to: 'e' })
+      E.push({ from: 'e', to: 'f' })
+      E.push({ from: 'd', to: 'x' })
+      E.push({ from: 'x', to: 'y' })
+      E.push({ from: 'b', to: 'e' })
       E.forEach(e => dag.add(e.from, e.to))
     })
 
@@ -103,17 +103,26 @@ describe('Removal Test', () => {
     })
 
     it('should remove to vertex in DAG with only 2 vertices', () => {
-      dag=new Dag()
+      dag = new Dag()
       dag.add('a', 'b')
       dag.removeVertex('b')
       deepEqual(dag.V, ['a']).should.equal(true)
     })
 
     it('should remove from vertex in DAG with only 2 vertices', () => {
-      dag=new Dag()
+      dag = new Dag()
       dag.add('a', 'b')
       dag.removeVertex('a')
       deepEqual(dag.V, ['b']).should.equal(true)
+    })
+
+    it('should remove to edge in DAG with only 2 vertices', () => {
+      dag = new Dag()
+      const vertices = ['a', 'b']
+      dag.add('a', 'b')
+      dag.removeEdge('a', 'b')
+      expect(dag.edge('a', 'b')).to.be.undefined
+      vertices.forEach((v) => dag.V.includes(v).should.equal(true))
     })
   })
 })
