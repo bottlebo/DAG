@@ -224,14 +224,14 @@ class Dag {
    */
   removeVertex(vertex, callback) {
     if (this.V.includes(vertex)) {
-      // const vx = [v]
-      // for (let p of this.findPathsUp(v)) {
-      //   vx.push(...p.filter(x => vx.indexOf(x) < 0))
-      // }
-      //for (let vertex of vx) {
-      let obj = this.readObj(vertex)
+      const obj = this.readObj(vertex)
       this.removeObj(vertex)
       if (vertex in this._edges) {
+        for(const v of this._edges[vertex]){
+          if(!Object.keys(this._edges).includes(v.from)) {
+            this._edges[v.from] = []
+          }
+        }
         delete this._edges[vertex];
       }
       Object.keys(this._edges).forEach((to) => {
