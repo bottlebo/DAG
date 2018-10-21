@@ -102,5 +102,18 @@ describe('Removal Test', () => {
       deepEqual(dag, removedDag).should.equal(true)
     })
 
+    it('should remove to vertex in DAG with only 2 vertices', () => {
+      dag=new Dag()
+      dag.add('a', 'b')
+      dag.removeVertex('b')
+      deepEqual(dag.V, ['a']).should.equal(true)
+    })
+
+    it('should remove from vertex in DAG with only 2 vertices', () => {
+      dag=new Dag()
+      dag.add('a', 'b')
+      dag.removeVertex('a')
+      deepEqual(dag.V, ['b']).should.equal(true)
+    })
   })
 })
