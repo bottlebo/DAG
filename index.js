@@ -1,7 +1,7 @@
-const DownPath = require('./path');
-const Dag = require('./dag');
+const Path = require('./path')
+const Dag = require('./dag')
 
 module.exports = {
-	Dag,
-	DownPath
-};
+  Dag,
+  Path
+}
