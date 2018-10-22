@@ -1,6 +1,6 @@
 const Dag = require('../dag')
 const expect = require('chai').expect
-describe('Paths Down Test', () => {
+describe('Includes Test', () => {
   describe('DAG(order=8, size=8)', () => {
     let dag
     let E
