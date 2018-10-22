@@ -15,14 +15,14 @@ describe('Removal Test', () => {
       // D['d'] = ['a']
       // D['e'] = ['a', 'd', 'b']
       E = []
-      E.push({ from: 'a', to: 'b' })
-      E.push({ from: 'b', to: 'c' })
-      E.push({ from: 'a', to: 'd' })
-      E.push({ from: 'd', to: 'e' })
-      E.push({ from: 'e', to: 'f' })
-      E.push({ from: 'd', to: 'x' })
-      E.push({ from: 'x', to: 'y' })
-      E.push({ from: 'b', to: 'e' })
+      E.push({from: 'a', to: 'b'})
+      E.push({from: 'b', to: 'c'})
+      E.push({from: 'a', to: 'd'})
+      E.push({from: 'd', to: 'e'})
+      E.push({from: 'e', to: 'f'})
+      E.push({from: 'd', to: 'x'})
+      E.push({from: 'x', to: 'y'})
+      E.push({from: 'b', to: 'e'})
       E.forEach(e => dag.add(e.from, e.to))
     })
 
@@ -124,5 +124,10 @@ describe('Removal Test', () => {
       expect(dag.edge('a', 'b')).to.be.undefined
       vertices.forEach((v) => dag.V.includes(v).should.equal(true))
     })
+    it('should  remove vertex in a middle', () => {
+      dag.removeVertex('d')
+      deepEqual(dag.V, ['b', 'a', 'c', 'e', 'f', 'x', 'y']).should.equal(true)
+    })
+
   })
 })

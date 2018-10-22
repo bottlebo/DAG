@@ -142,7 +142,7 @@ class Dag {
     }
     const dag = new Dag();
     this._edges[to].forEach((e) => {
-      const cloned = { from: e.from, to };
+      const cloned = {from: e.from, to}
       dag.add(cloned.from, cloned.to);
     });
     return dag;
@@ -160,7 +160,7 @@ class Dag {
     Object.keys(this._edges).forEach((key) => {
       this._edges[key].forEach((e) => {
         if (e.from === from) {
-          const cloned = { from: e.from, to: key };
+          const cloned = {from: e.from, to: key}
           dag.add(cloned.from, cloned.to);
         }
       });

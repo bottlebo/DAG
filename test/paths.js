@@ -60,5 +60,17 @@ describe('Paths Down Test', () => {
       const sample = ['b', 'c', 'e', 'f', 'z']
       deepEqual(Array.from(dag.findPathsDown('b').vertices()), sample).should.equal(true)
     })
+
+    it('should return longest path length (from unknown vertex)', async () => {
+      dag.findPathsDown('unknown').getLongestPathLength().should.equal(0)
+    })
+
+    it('should return longest path length (only 1 path)', async () => {
+      dag.findPathsDown('z').getLongestPathLength().should.equal(1)
+    })
+
+    it('should return longest path length (3 different path)', async () => {
+      dag.findPathsDown('b').getLongestPathLength().should.equal(3)
+    })
   })
 })

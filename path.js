@@ -16,6 +16,13 @@ class Path {
     return this._setAllVertices.values()
   }
 
+  getLongestPathLength () {
+    return this.paths.reduce(
+      (longestLength, currentPath) =>
+        currentPath.length > longestLength ? currentPath.length : longestLength,
+      0)
+  }
+
   _nextPath (v) {
     this._index++
     this.paths[this._index] = []
