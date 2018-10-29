@@ -71,10 +71,12 @@ class Dag {
    * Save object to vertex
    * @param {string} v  the vertex.
    * @param {object} obj - object stored at the vertex
+   * @param {boolean} checkVertex - should we check vertex existence
+   *                (dramatically decrease performance on big graphs)
    *
    */
-  saveObj(v, obj) {
-    if (!this.V.includes(v)) throw 'Unknown vertex'
+  saveObj (v, obj, checkVertex = true) {
+    if (checkVertex && !this.V.includes(v)) throw 'Unknown vertex'
     this._storage[v] = obj
   }
 
@@ -219,7 +221,7 @@ class Dag {
 
   /**
    * Remove vertex
-   * @param {string} v  the vertex.
+   * @param {string} vertex  the vertex.
    * @callback callback return object, stored in vertex
    */
   removeVertex(vertex, callback) {
