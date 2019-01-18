@@ -1,6 +1,7 @@
 const Dag = require('../dag')
 const deepEqual = require('deep-equal')
 const expect = require('chai').expect
+require('chai').should();
 
 describe('Removal Test', () => {
   describe('DAG(order=8, size=8)', () => {
@@ -28,7 +29,7 @@ describe('Removal Test', () => {
 
     it('should remove each edge', () => {
       E.forEach((edge, index) => {
-        const removedDag = dag._deepClone()
+        const removedDag = dag._deepClone();
         const removedE = E.slice(0)
         removedDag.removeEdge(edge.from, edge.to)
         removedE.splice(index, 1)

@@ -5,6 +5,7 @@ class Dag {
     this._edges = {};
     this._storage = {};
     this._testForCyclic = true;
+    this._vertex = new Set();
   }
 
   get testForCyclic() {
@@ -40,18 +41,7 @@ class Dag {
    * @returns  dag vertices
    */
   get V() {
-    const vertices = Object.keys(this._edges).reduce((previous, key) => {
-      if (!previous.includes(key)) {
-        previous.push(key);
-      }
-      this._edges[key].forEach((e) => {
-        if (!previous.includes(e.from)) {
-          previous.push(e.from);
-        }
-      });
-      return previous;
-    }, []);
-    return vertices;
+    return [...this._vertex];
   }
 
   /**
@@ -83,7 +73,7 @@ class Dag {
    *
    */
   saveObj (v, obj, checkVertex = true) {
-    if (checkVertex && !this.V.includes(v)) throw 'Unknown vertex'
+    if (checkVertex && !this._vertex.has(v)) throw 'Unknown vertex'
     this._storage[v] = obj
   }
 
@@ -128,8 +118,16 @@ class Dag {
     const edge = {
       from: from
     }
+   
+
+    if(!this._vertex.has(to)) 
+      this._vertex.add(to);
+    if(!this._vertex.has(from))
+      this._vertex.add(from);
+
     if (this._edges[to] === undefined) {
       this._edges[to] = [];
+
     }
     if (this._edges[to].find(e => e.from === from) === undefined)
       this._edges[to].push(edge);
@@ -212,7 +210,7 @@ class Dag {
    * @returns {*}
    */
   hasVertex(v) {
-    return this.V.includes(v);
+    return this._vertex.has(v)
   }
 
   /**
@@ -220,8 +218,9 @@ class Dag {
    * @param {string} v the vertex
    */
   addVertex(v) {
-    if (!this.V.includes(v)) {
-      this._edges[v] = []
+    if (!this._vertex.has(v)) {
+      this._edges[v] = [];
+      this._vertex.add(v);
     }
     else throw 'Already exist'
   }
@@ -232,7 +231,7 @@ class Dag {
    * @callback callback return object, stored in vertex
    */
   removeVertex(vertex, callback) {
-    if (this.V.includes(vertex)) {
+    if (this._vertex.has(vertex)) {
       const obj = this.readObj(vertex)
       this.removeObj(vertex)
       if (vertex in this._edges) {
@@ -248,6 +247,7 @@ class Dag {
           return e.from !== vertex;
         });
       });
+      this._vertex.delete(vertex)
       if (callback)
         callback.call(null, vertex, obj)
     }
@@ -286,9 +286,10 @@ class Dag {
         newDag.add(e.from, to);
       });
     });
-    this.V.forEach((v) => {
+    [...this._vertex].forEach((v) => {
       if (this.readObj(v)) newDag.saveObj(v, this.readObj(v))
-    })
+    });
+    newDag._testForCyclic = this._testForCyclic;
     return newDag
   }
 
