@@ -4,8 +4,15 @@ class Dag {
   constructor() {
     this._edges = {};
     this._storage = {};
+    this._testForCyclic = true;
   }
 
+  get testForCyclic() {
+    return this._testForCyclic;
+  }
+  set testForCyclic(value) {
+    this._testForCyclic = value;
+  }
   /**
    * @returns length of dag vertices
    */
@@ -115,7 +122,7 @@ class Dag {
    * @returns  dag
    */
   add(from, to) {
-    if (this._testCycle(from, to)) {
+    if (this._testForCyclic && this._testCycle(from, to)) {
       throw 'DAG has cycle(s)'
     }
     const edge = {
