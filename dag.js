@@ -182,7 +182,7 @@ class Dag {
    */
   findPathsDown(from) {
     const downPath = new Path()
-    if (this.V.includes(from)) {
+    if (this._vertex.has(from)) {
       downPath._add(from)
       this._down(from, downPath)
     }
@@ -196,7 +196,7 @@ class Dag {
    */
   findPathsUp(from) {
     const upPath = new Path()
-    if (this.V.includes(from)) {
+    if (this._vertex.has(from)) {
       upPath._add(from)
       this._up(upPath)
     }
