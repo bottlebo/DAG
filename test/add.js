@@ -1,4 +1,4 @@
-const Dag = require('../dag')
+const Dag = require('../dag-new')
 const expect = require('chai').expect
 require('chai').should();
 const deepEqual = require('deep-equal')
@@ -20,6 +20,9 @@ describe('Addition Test', () => {
       E.push({from: 'd', to: 'b'})
       E.push({from: 'a', to: 'd'})
       E.forEach(e => dag.add(e.from, e.to))
+      // console.log(dag._edges)
+      // console.log('---')
+      // console.log(util.inspect(dag._edges_m.entries(), { depth: null }))
     })
 
    
