@@ -1,5 +1,7 @@
-const Dag = require('../dag')
+const Dag = require('../dag-new')
 const expect = require('chai').expect
+require('chai').should();
+
 describe('Includes Test', () => {
   describe('DAG(order=8, size=8)', () => {
     let dag

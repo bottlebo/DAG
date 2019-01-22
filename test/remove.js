@@ -101,9 +101,9 @@ describe('Removal Test', () => {
       removedDag.addVertex('z')
       removedDag.removeVertex('z')
 
-      deepEqual(dag._edges_m, removedDag._edges_m).should.equal(true);
+      deepEqual(dag._edges, removedDag._edges).should.equal(true);
       deepEqual(dag.V, removedDag.V).should.equal(true);
-      //*999deepEqual(dag, removedDag).should.equal(true);
+      deepEqual(dag, removedDag).should.equal(true);
     })
 
     it('should remove to vertex in DAG with only 2 vertices', () => {

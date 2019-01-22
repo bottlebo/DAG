@@ -1,5 +1,6 @@
-const Dag = require('../dag')
+const Dag = require('../dag-new')
 const deepEqual = require('deep-equal')
+require('chai').should();
 
 describe('Tips Test', () => {
   describe('DAG(order=4, size=4)', () => {

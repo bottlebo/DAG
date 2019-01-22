@@ -1,4 +1,5 @@
-const Dag = require('../dag')
+const Dag = require('../dag-new')
+require('chai').should();
 
 describe('Clone Test', () => {
   describe('DAG(order=4, size=4)', () => {
