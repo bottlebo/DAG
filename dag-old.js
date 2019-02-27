@@ -2,8 +2,8 @@ const Path = require('./path')
 
 class Dag {
   constructor() {
-    this._edges = new Map();
-    this._storage = new Map();
+    this._edges = {};
+    this._storage = {};
     this._testForCyclic = true;
     this._vertex = new Set();
   }
@@ -18,22 +18,23 @@ class Dag {
    * @returns length of dag vertices
    */
   get order() {
-    return this.V.length;
+    const vertices = this.V;
+    return vertices.length;
   }
 
   /**
    * @returns length of dag edges
    */
   get size() {
-    return [...this._edges.keys()]
-      .reduce((previous, key) => previous + this._edges.get(key).length, 0);
+    return Object.keys(this._edges)
+      .reduce((previous, key) => previous + this._edges[key].length, 0);
   }
 
   /**
    * @returns  dag tips
    */
   get tips() {
-    return this.V.filter(t => this.edgesTo(t)._edges.get(t) === undefined)
+    return this.V.filter(t => this.edgesTo(t)._edges[t] === undefined)
   }
 
   /**
@@ -47,11 +48,10 @@ class Dag {
    * @returns  dag edges
    */
   get E() {
-    
     const edges = [];
-    for(const to of this._edges.keys()) {
-      this._edges.get(to).forEach(edge => edges.push(this.edge(edge.from, to)));
-    }
+    Object.keys(this._edges).forEach((to) => {
+      this._edges[to].forEach(edge => edges.push(this.edge(edge.from, to)));
+    });
     return edges;
   }
 
@@ -61,7 +61,7 @@ class Dag {
    * @returns  object stored at the vertex
    */
   readObj(v) {
-    return this._storage.get(v);
+    return this._storage[v]
   }
 
   /**
@@ -72,9 +72,9 @@ class Dag {
    *                (dramatically decrease performance on big graphs)
    *
    */
-  saveObj(v, obj, checkVertex = true) {
+  saveObj (v, obj, checkVertex = true) {
     if (checkVertex && !this._vertex.has(v)) throw 'Unknown vertex'
-    this._storage.set(v, obj);
+    this._storage[v] = obj
   }
 
   /**
@@ -82,8 +82,8 @@ class Dag {
    * @param {string} v  the vertex.
    */
   removeObj(v) {
-    if (this._storage.has(v))
-      this._storage.delete(v);
+    if (this._storage[v])
+      delete this._storage[v]
   }
 
   /**
@@ -92,9 +92,8 @@ class Dag {
    * @returns  edge or undefined if edge non-exist
    */
   edge(from, to) {
-   
-    if(this._edges.get(to) !== undefined) {
-      const edge = this._edges.get(to).find(e => e.from === from);
+    if (this._edges[to] !== undefined) {
+      const edge = this._edges[to].find(e => e.from === from);
       if (edge !== undefined) {
         return {
           from: edge.from,
@@ -119,22 +118,21 @@ class Dag {
     const edge = {
       from: from
     }
+   
 
-    if (!this._vertex.has(to))
+    if(!this._vertex.has(to)) 
       this._vertex.add(to);
-    if (!this._vertex.has(from))
+    if(!this._vertex.has(from))
       this._vertex.add(from);
 
-     
-    if (this._edges.get(to) === undefined)
-      this._edges.set(to, [])
-   
-    let _to = this._edges.get(to);
-    if (_to.find(e => e.from === from) === undefined)
-      _to.push(edge);
-    
-    if (this._edges.get(from) !== undefined && this._edges.get(from).length == 0)
-      this._edges.delete(from);
+    if (this._edges[to] === undefined) {
+      this._edges[to] = [];
+
+    }
+    if (this._edges[to].find(e => e.from === from) === undefined)
+      this._edges[to].push(edge);
+    if (this._edges[from] !== undefined && this._edges[from].length == 0)
+      delete this._edges[from]
     return this;
   }
 
@@ -146,11 +144,11 @@ class Dag {
    *                          it.
    */
   edgesTo(to) {
-    if (undefined === this._edges.get(to)) {
+    if (undefined === this._edges[to]) {
       return new Dag();
     }
     const dag = new Dag();
-    this._edges.get(to).forEach((e) => {
+    this._edges[to].forEach((e) => {
       const cloned = {from: e.from, to}
       dag.add(cloned.from, cloned.to);
     });
@@ -166,14 +164,14 @@ class Dag {
    */
   edgesFrom(from) {
     const dag = new Dag();
-    for(const key of this._edges.keys()) {
-      this._edges.get(key).forEach((e) => {
+    Object.keys(this._edges).forEach((key) => {
+      this._edges[key].forEach((e) => {
         if (e.from === from) {
           const cloned = {from: e.from, to: key}
           dag.add(cloned.from, cloned.to);
         }
       });
-    }
+    });
     return dag;
   }
 
@@ -202,6 +200,7 @@ class Dag {
       upPath._add(from)
       this._up(upPath)
     }
+    //downPath._trim();
     return upPath
   }
 
@@ -220,7 +219,7 @@ class Dag {
    */
   addVertex(v) {
     if (!this._vertex.has(v)) {
-      this._edges.set(v,[]);
+      this._edges[v] = [];
       this._vertex.add(v);
     }
     else throw 'Already exist'
@@ -234,22 +233,20 @@ class Dag {
   removeVertex(vertex, callback) {
     if (this._vertex.has(vertex)) {
       const obj = this.readObj(vertex)
-      this.removeObj(vertex);
-      const keys = [...this._edges.keys()];
-      if (keys.includes(vertex)) {
-        for (const v of this._edges.get(vertex)) {
-          if (!keys.includes(v.from)) {
-            this._edges.set(v.from, []);
+      this.removeObj(vertex)
+      if (vertex in this._edges) {
+        for (const v of this._edges[vertex]) {
+          if (!Object.keys(this._edges).includes(v.from)) {
+            this._edges[v.from] = []
           }
         }
-        this._edges.delete(vertex);
+        delete this._edges[vertex];
       }
-
-      for(const to of this._edges.keys()){
-        this._edges.set(to, this._edges.get(to).filter((e) => {
+      Object.keys(this._edges).forEach((to) => {
+        this._edges[to] = this._edges[to].filter((e) => {
           return e.from !== vertex;
-        }));
-      }
+        });
+      });
       this._vertex.delete(vertex)
       if (callback)
         callback.call(null, vertex, obj)
@@ -264,17 +261,17 @@ class Dag {
    * @returns dag
    */
   removeEdge(from, to) {
-    if (!([...this._edges.keys()].includes(to))) {
+    if (!(to in this._edges)) {
       return this;
     }
-    const targetIndex = this._edges.get(to).findIndex(e => e.from === from);
+    const targetIndex = this._edges[to].findIndex(e => e.from === from);
     if (targetIndex === -1) {
       return this;
     }
-    if (![...this._edges.keys()].includes(from)) {
-      this._edges.set(from, []);
+    if (!Object.keys(this._edges).includes(from)) {
+      this._edges[from] = []
     }
-    this._edges.get(to).splice(targetIndex, 1)[0]
+    this._edges[to].splice(targetIndex, 1)[0]
     return this;
   }
 
@@ -283,13 +280,12 @@ class Dag {
    * @return new DAG instance without references from the original pieces, at all.
    */
   _deepClone() {
-    
     const newDag = new Dag();
-    for(const to of this._edges.keys()) {
-      this._edges.get(to).forEach((e) => {
+    Object.keys(this._edges).forEach((to) => {
+      this._edges[to].forEach((e) => {
         newDag.add(e.from, to);
       });
-    }
+    });
     [...this._vertex].forEach((v) => {
       if (this.readObj(v)) newDag.saveObj(v, this.readObj(v))
     });
@@ -304,9 +300,9 @@ class Dag {
    */
   _clone() {
     const newDag = new Dag();
-    [...this._edges.keys()].forEach((key) => {
-      newDag._edges.set(key, this._edges.get(key));
-      newDag._storage.set(key, this._storage.get(key))
+    Object.keys(this._edges).forEach((key) => {
+      newDag._edges[key] = this._edges[key];
+      newDag._storage[key] = this._storage[key]
     });
     return newDag;
   }
@@ -321,12 +317,12 @@ class Dag {
   }
 
   _down(from, dp) {
-    let to = [...this.edgesFrom(from)._edges.keys()];
+    let to = Object.keys(this.edgesFrom(from)._edges)
     if (to.length == 0) return
     let _dp = dp.paths.slice()
     for (let p of _dp) {
       let f = p[p.length - 1]
-      let to = [...this.edgesFrom(f)._edges.keys()];
+      let to = Object.keys(this.edgesFrom(f)._edges)
       if (to.length > 0) {
         for (let i = 1; i < to.length; i++) {
           dp._nextPath()
@@ -338,7 +334,7 @@ class Dag {
     }
     for (let p of dp.paths) {
       let v = p[p.length - 1]
-      if ([...this.edgesFrom(v)._edges.keys()].length == 0) continue
+      if (Object.keys(this.edgesFrom(v)._edges).length == 0) continue
       this._down(v, dp)
     }
   }
@@ -347,8 +343,8 @@ class Dag {
     let _dp = dp.paths.slice()
     for (let p of _dp) {
       let f = p[p.length - 1]
-      if (this._edges.get(f) === undefined || this._edges.get(f).length == 0) continue
-      let to = this._edges.get(f).reduce((p, v) => {
+      if (this._edges[f] === undefined || this._edges[f].length == 0) continue
+      let to = this._edges[f].reduce((p, v) => {
         p.push(v.from);
         return p
       }, [])
@@ -363,7 +359,7 @@ class Dag {
     }
     for (let p of dp.paths) {
       let v = p[p.length - 1]
-      if (this._edges.get(v) === undefined || this._edges.get(v).length == 0) continue
+      if (this._edges[v] === undefined || this._edges[v].length == 0) continue
       this._up(dp)
     }
   }
@@ -384,8 +380,8 @@ class Dag {
       if (callback !== undefined) {
         callback(visit);
       }
-      if (this._edges.get(visit) !== undefined) {
-        this._edges.get(visit).forEach(e => q.push(e.from));
+      if (this._edges[visit] !== undefined) {
+        this._edges[visit].forEach(e => q.push(e.from));
       }
     }
     return undefined;

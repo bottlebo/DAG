@@ -1,4 +1,4 @@
-const Dag = require('../dag-new')
+const Dag = require('../dag')
 const deepEqual = require('deep-equal')
 require('chai').should();
 
